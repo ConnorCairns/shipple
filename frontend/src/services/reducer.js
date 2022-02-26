@@ -3,7 +3,8 @@ export const initialState = {
     date: new Date(),
     name: "",
     walkingDist: 10,
-    crawlID: ""
+    crawlID: "",
+    algorithm: "ai"
 }
 
 export const reducer = (state, action) => {
@@ -18,6 +19,8 @@ export const reducer = (state, action) => {
             return {...state, walkingDist: action.payload}
         case 'updateCrawlID':
             return {...state, crawlID: action.payload}
+        case 'updateAlgorithm':
+            return {...state, algorithm: action.payload}
         default:
             return state
     }

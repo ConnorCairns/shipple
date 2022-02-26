@@ -1,7 +1,63 @@
 import { Box, Button, ButtonGroup, Checkbox, Container, FormControlLabel, Grid, Paper, Stack, Toolbar } from '@mui/material';
 import Title from '../components/Title';
+import { useReducerContext } from '../services/ReducerProvider';
+
+
+function Paragraph() {
+    const [state, dispatch] = useReducerContext()
+
+    switch(state.algorithm){
+        case 'ai':
+            return (
+                <p>
+                    The AI approach does some kind of machine learning...
+                </p>
+            )
+        case 'kMeans':
+            return (
+                <p>
+                    K means is a clustering algorithm that assigns datapoints to cluster centres.
+                </p>
+            )
+        case 'fosters':
+            return (
+                <p>
+                    This algorithm prioritises pubs that sell Fosters beer.
+                </p>
+            )
+        case 'tsp':
+            return (
+                <p>
+                    This is another algorithm...
+                </p>
+            )
+        default:
+            return <p></p>
+    }
+}
+
+
+function AlgorithmTitle() {
+    const [state, dispatch] = useReducerContext()
+
+    switch (state.algorithm) {
+        case 'ai':
+            return <Title>AI Algorithm:</Title>
+        case 'kMeans':
+            return <Title>K Means Algorithm:</Title>
+        case 'fosters':
+            return <Title>Fosters Algorithm:</Title>
+        case 'tsp':
+            return <Title>TSP Algorithm:</Title>
+        default:
+            return <Title></Title>
+    }
+}
+
 
 const Map = () => {
+    const [state, dispatch] = useReducerContext()
+
     return(
         <Box component="main"
         sx={{
@@ -34,10 +90,10 @@ const Map = () => {
                         <FormControlLabel control={<Checkbox defaultChecked />} label="Show crawlers" />
                         <Title>Routes:</Title>
                         <ButtonGroup orientation='vertical'>
-                            <Button>AI</Button>
-                            <Button>K Means</Button>
-                            <Button>Fosters</Button>
-                            <Button>TSP</Button>
+                            <Button onClick={() => dispatch({ type: 'updateAlgorithm', payload: "ai" })}>AI</Button>
+                            <Button onClick={() => dispatch({ type: 'updateAlgorithm', payload: "kMeans" })}>K Means</Button>
+                            <Button onClick={() => dispatch({ type: 'updateAlgorithm', payload: "fosters" })}>Fosters</Button>
+                            <Button onClick={() => dispatch({ type: 'updateAlgorithm', payload: "tsp" })}>TSP</Button>
                         </ButtonGroup>
                     </Paper>
                 </Grid>
@@ -46,11 +102,8 @@ const Map = () => {
                 </Grid>
                 <Grid item xs={3}>
                     <Paper>
-                        <Title>K Means Algorithm</Title>
-                        <p>
-                            This algorithm assigns each of the given datapoints to one of k different cluster centres. 
-                            It uses a machine learning approach to update its prediction of the cluster centres as well as the assignment of datapoints to these centres.
-                        </p>
+                        <AlgorithmTitle></AlgorithmTitle>
+                        <Paragraph algorithm='ai'></Paragraph>
                         <Title>Stats:</Title>
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
