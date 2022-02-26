@@ -88,16 +88,16 @@ def get_pubs_box():
 @app.route('/api/v1/get_pubs_poly', methods=['GET'])
 def get_pubs_poly():
     query_parameters = request.get_json()
-    print(f"a {query_parameters}")
+    # print(f"a {query_parameters}")
     coords = query_parameters["coords"]
-    print(f"b {coords}")
+    # print(f"b {coords}")
     tmp = " ".join([str(i) for i in coords])
     url = QUERY.format(f'poly: "{tmp}"')
-    print(f"c - {url}")
+    # print(f"c - {url}")
     r = requests.get(url)
-    print(f"d - {r}")
+    # print(f"d - {r}")
     data = r.json()
-    print(f"e - {data}")
+    # print(f"e - {data}")
 
     lst = parse_pubs(data)
 
