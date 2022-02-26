@@ -1,8 +1,10 @@
 export const initialState = {
-    count: 0,
     connected: false,
     date: new Date(),
     name: "",
+    walkingDist: 10,
+    crawlID: "",
+    algorithm: "ai"
 }
 
 export const reducer = (state, action) => {
@@ -13,8 +15,12 @@ export const reducer = (state, action) => {
             return {...state, name: action.payload}
         case 'connected':
             return {...state, connected: true}
-        case 'increment':
-            return {...state, count: state.count + 1}
+        case 'updateWalkingDist':
+            return {...state, walkingDist: action.payload}
+        case 'updateCrawlID':
+            return {...state, crawlID: action.payload}
+        case 'updateAlgorithm':
+            return {...state, algorithm: action.payload}
         default:
             return state
     }
