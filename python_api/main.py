@@ -21,7 +21,7 @@ out skel qt;"""
 
 
 def parse_pubs(data):
-    print(f"A - {data}")
+    # print(f"A - {data}")
     query_parameters = data
 
     # print((query_parameters["elements"][0]["tags"]["name"]))
@@ -57,16 +57,16 @@ def parse_pubs(data):
 @app.route('/api/v1/get_pubs_box', methods=['GET'])
 def get_pubs_box():
     query_parameters = request.get_json()
-    print(f"a {query_parameters}")
+    # print(f"a {query_parameters}")
     lat1, lon1, lat2, lon2 = query_parameters["coords"]
-    print(f"b {lat1} - {lon1} - {lat2} - {lon2}")
+    # print(f"b {lat1} - {lon1} - {lat2} - {lon2}")
     url = QUERY.format(f"{lat1},{lon1},{lat2},{lon2}")
 
-    print(f"c - {url}")
+    # print(f"c - {url}")
     r = requests.get(url)
-    print(f"d - {r}")
+    # print(f"d - {r}")
     data = r.json()
-    print(f"c - {data}")
+    # print(f"c - {data}")
 
     lst = parse_pubs(data)
 
