@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/rs/cors"
+
 	ws "github.com/ConnorCairns/shipple/monkey/ws"
 )
 
@@ -13,12 +15,16 @@ var addr = flag.String("addr", ":8080", "http service address")
 func main() {
 	flag.Parse()
 
+	mux := http.NewServeMux()
+
 	log.Printf("Starting web server on %s", *addr)
-	http.HandleFunc("/ws", func(rw http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/ws", func(rw http.ResponseWriter, r *http.Request) {
 		ws.ServeWs(rw, r)
 	})
 
-	err := http.ListenAndServe(*addr, nil)
+	handler := cors.Default().Handler(mux)
+
+	err := http.ListenAndServe(*addr, handler)
 
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
