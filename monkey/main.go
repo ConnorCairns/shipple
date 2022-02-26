@@ -3,11 +3,10 @@ package main
 import (
 	"flag"
 	"log"
-	"net/http"
-
-	"github.com/rs/cors"
 
 	ws "github.com/ConnorCairns/shipple/monkey/ws"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 var addr = flag.String("addr", ":8080", "http service address")
@@ -15,16 +14,16 @@ var addr = flag.String("addr", ":8080", "http service address")
 func main() {
 	flag.Parse()
 
-	mux := http.NewServeMux()
-
-	log.Printf("Starting web server on %s", *addr)
-	mux.HandleFunc("/ws", func(rw http.ResponseWriter, r *http.Request) {
-		ws.ServeWs(rw, r)
+	r := gin.Default()
+	r.Use(cors.Default())
+	r.GET("/ws", func(c *gin.Context) {
+		ws.ServeWs(c.Writer, c.Request)
 	})
 
-	handler := cors.Default().Handler(mux)
+	api := r.Group("/api")
+	api.POST("/lobby", createLobby)
 
-	err := http.ListenAndServe(*addr, handler)
+	err := r.Run(*addr)
 
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
