@@ -55,6 +55,15 @@ function AlgorithmTitle() {
 }
 
 
+function DaysToGo() {
+    const [state, dispatch] = useReducerContext()
+    const today = new Date()
+    const diffTime = Math.abs(today - state.date)
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    return diffDays
+}
+
+
 const Map = () => {
     const [state, dispatch] = useReducerContext()
 
@@ -74,20 +83,21 @@ const Map = () => {
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', mt: '0.5rem' }}>
-                        <Title>Event name</Title>
+                        <Title>{state.name}</Title>
                         <Stack direction="row" spacing={2}>
-                            <Paper>x/y responded</Paper>
-                            <Paper>x days to go</Paper>
+                            <Paper>{state.responses} responded</Paper>
                             <Paper>
-                                <p>invite link:</p>
-                                <a href='http://localhost:3000/'>Share this URL</a>
+                                <DaysToGo></DaysToGo> days to go
+                            </Paper>
+                            <Paper>
+                                Invite link: <a href={state.crawlID}>{state.crawlID}</a>
                             </Paper>
                         </Stack>
                     </Paper>
                 </Grid>
                 <Grid item xs={2}>
                     <Paper>
-                        <FormControlLabel control={<Checkbox defaultChecked />} label="Show crawlers" />
+                        <FormControlLabel control={<Checkbox></Checkbox>} label="Show crawlers" />
                         <Title>Routes:</Title>
                         <ButtonGroup orientation='vertical'>
                             <Button onClick={() => dispatch({ type: 'updateAlgorithm', payload: "ai" })}>AI</Button>
@@ -107,18 +117,16 @@ const Map = () => {
                         <Title>Stats:</Title>
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
-                                <Paper elevation={4}>10 tonnes</Paper>
+                                <Paper elevation={4}>{state.carbon} tonnes of carbon</Paper>
                             </Grid>
                             <Grid item xs={6}>
-                                <Paper elevation={4}>
-                                    £50
-                                </Paper>
+                                <Paper elevation={4}>£{state.uberSavings} saved on Ubers</Paper>
                             </Grid>
                             <Grid item xs={6}>
-                                <Paper elevation={4}>2km walked</Paper>
+                                <Paper elevation={4}>{state.walkingDist}km walked</Paper>
                             </Grid>
                             <Grid item xs={6}>
-                                <Paper elevation={4}>100 pint options</Paper>
+                                <Paper elevation={4}>{state.pintOptions} pint options</Paper>
                             </Grid>
                         </Grid>
                     </Paper>
