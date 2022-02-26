@@ -129,7 +129,7 @@ def get_pubs_poly(coords):
     # return "ree"
     pass
 
-@app.route('/api/v1/chuckle_brothers', methods=['GET'])
+@app.route('/api/v1/chuckle_brothers', methods=['POST'])
 def chuckle_brothers():
     print("A")
     query_parameters = request.get_json()
