@@ -29,18 +29,31 @@ def parse_pubs(data):
     ways = {}
     lst = []
     for pub in (query_parameters["elements"]):
-        if pub["type"] == "node":
-            lat = pub["lat"]
-            long = pub["lon"]
-            if "tags" in pub.keys():
-                name = pub["tags"]["name"]
-                lst.append([lat,long,name])
-                # print(f"{lat} - {long} - {name}")
+        print(pub)
+        if pub["type"] in ["node", "way"]:
+            if "nodes" in pub.keys():
+                if "tags" in pub.keys():
+                    if "name" in pub["tags"].keys():
+                        name = pub["tags"]["name"]
+                        ways[pub["nodes"][0]] = name
+                else:
+                    nodes[pub["id"]] = pub["nodes"][0]
             else:
-                nodes[pub["id"]] = [lat, long]
-        else:
-            name = pub["tags"]["name"]
-            ways[pub["nodes"][0]] = name
+                lat = pub["lat"]
+                long = pub["lon"]
+                if "tags" in pub.keys():
+                    if "name" in pub["tags"].keys():
+                        name = pub["tags"]["name"]
+                    else:
+                        name = "NULL"
+                    lst.append([lat ,long, name])
+                    # print(f"{lat} - {long} - {name}")
+                else:
+                    nodes[pub["id"]] = [lat, long]
+        elif pub["type"] == "way":
+            if "name" in pub["tags"].keys():
+                name = pub["tags"]["name"]
+                ways[pub["nodes"][0]] = name
 
     for id, name in ways.items():
         lat, long = nodes[id]
@@ -76,14 +89,20 @@ def get_pubs_box():
 @app.route('/api/v1/get_pubs_poly', methods=['GET'])
 def get_pubs_poly():
     query_parameters = request.get_json()
-    lat1, lon1, lat2, lon2, lat3, lon3 = query_parameters["coords"]
-    url = QUERY.format(f"{lat1},{lon1},{lat2},{lon2},{lat3},{lon3}")
+    print(f"a {query_parameters}")
+    coords = query_parameters["coords"]
+    print(f"b {coords}")
+    url = QUERY.format(f"{coords}"[1:-1])
+    print(f"c - {url}")
     r = requests.get(url)
+    print(f"d - {r}")
     data = r.json()
+    print(f"e - {data}")
 
     lst = parse_pubs(data)
 
     return lst
+    # return "ree"
     pass
 
 
