@@ -5,6 +5,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import MapIcon from '@mui/icons-material/Map';
+import AddIcon from '@mui/icons-material/Add';
 import { ListItemText } from '@material-ui/core';
 import { useNavigate } from 'react-router-dom';
 
@@ -89,6 +90,12 @@ const Navbar = () => {
                             <MapIcon />
                         </ListItemIcon>
                         <ListItemText primary="Map" />
+                    </ListItemButton>
+                    <ListItemButton key={"Create Bar Crawl"} onClick={() => navigate("/crawl")}>
+                        <ListItemIcon >
+                            <AddIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Create Bar Crawl" />
                     </ListItemButton>
                 </List>
             </CustomDrawer >
