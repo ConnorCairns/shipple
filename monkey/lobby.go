@@ -3,7 +3,6 @@ package main
 import (
 	"math/rand"
 	"net/http"
-	"strconv"
 
 	"github.com/ConnorCairns/shipple/monkey/models"
 	"github.com/gin-gonic/gin"
@@ -12,18 +11,17 @@ import (
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 func (e *Env) createLobby(c *gin.Context) {
-	time, _ := strconv.Atoi(c.Param("time"))
-	newLobby := models.Lobby{
-		Name:          c.Param("name"),
-		ScheduledTime: (int64)(time),
-		Slug:          randString(6),
-	}
+	var lobby models.Lobby
 
-	result := e.db.Create(&newLobby)
+	c.ShouldBindJSON(&lobby)
+
+	lobby.Slug = randString(6)
+
+	result := e.db.Create(&lobby)
 
 	if result.Error == nil {
 		c.JSON(200, gin.H{
-			"lobby_id": newLobby.Slug,
+			"lobby_id": lobby.Slug,
 		})
 	} else {
 		c.JSON(500, gin.H{

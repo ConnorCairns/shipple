@@ -5,10 +5,10 @@ import (
 	"fmt"
 )
 
-type signalType int
+type SignalType int
 
 const (
-	undef signalType = iota
+	undef SignalType = iota
 
 	// Subscribe tells the handler we want to subscribe to another channel
 	Subscribe
@@ -26,7 +26,7 @@ const (
 	Disconnect
 )
 
-var toString = map[signalType]string{
+var toString = map[SignalType]string{
 	Subscribe:   "SUBSCRIBE",
 	Unsubscribe: "UNSUBSRIBE",
 	Message:     "MESSAGE",
@@ -34,7 +34,7 @@ var toString = map[signalType]string{
 	Disconnect:  "DISCONNECT",
 }
 
-var toID = map[string]signalType{
+var toID = map[string]SignalType{
 	"SUBSCRIBE":   Subscribe,
 	"UNSUBSCRIBE": Unsubscribe,
 	"MESSAGE":     Message,
@@ -44,14 +44,14 @@ var toID = map[string]signalType{
 
 // Signal represents an induvidial message of any type
 type Signal struct {
-	Cmd    signalType `json:"cmd"`
+	Cmd    SignalType `json:"cmd"`
 	Path   string     `json:"path"`
 	Sender string     `json:"sender"`
 
 	Message string `json:"message"`
 }
 
-func (s *signalType) UnmarshalJSON(data []byte) error {
+func (s *SignalType) UnmarshalJSON(data []byte) error {
 	var t string
 
 	err := json.Unmarshal(data, &t)
@@ -65,7 +65,7 @@ func (s *signalType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (s signalType) MarshallJSON() ([]byte, error) {
+func (s SignalType) MarshallJSON() ([]byte, error) {
 	if s, ok := toString[s]; ok {
 		return json.Marshal(s)
 	}
