@@ -1,37 +1,28 @@
 import flask
-
+import requests
 from flask import request, jsonify
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-# Create some test data for our catalog in the form of a list of dictionaries.
+QUERY = """http://www.overpass-api.de/api/interpreter?data=
+[out:json][timeout:25];
+(
+  node["amenity"="pub"]    ({0});
+  way["amenity"="pub"]     ({0});
+  relation["amenity"="pub"]({0});
+  node["amenity"="bar"]    ({0});
+  way["amenity"="bar"]     ({0});
+  relation["amenity"="bar"]({0});
+);
+out body;
+>;
+out skel qt;"""
 
 
-@app.route('/', methods=['GET'])
-def home():
-    return '''<h1>Distant Reading Archive</h1>
-<p>A prototype API for distant reading of science fiction novels.</p>'''
-
-
-# A route to return all of the available entries in our catalog.
-@app.route('/api/v1/resources/books/all', methods=['GET'])
-def api_all():
-    # return jsonify(books)
-    return None
-
-
-@app.route('/api/v1/poggers', methods=['GET'])
-def ree():
-    query_parameters = request.get_json()
-    print(query_parameters)
-    return "ree"
-    # query_parameters = request.args
-
-
-@app.route('/api/v1/test', methods=['GET'])
-def test():
-    query_parameters = request.get_json()
+def parse_pubs(data):
+    # print(f"A - {data}")
+    query_parameters = data
 
     # print((query_parameters["elements"][0]["tags"]["name"]))
     nodes = {}
@@ -55,13 +46,45 @@ def test():
         lat, long = nodes[id]
         lst.append([name, lat, long])
 
+    # print(lst)
+
     for pub in lst:
         print(f"{pub[1]} - {pub[2]} - {pub[0]}")
 
-    return "test"
-    # query_parameters = request.args
+    return jsonify(lst)
 
 
+@app.route('/api/v1/get_pubs_box', methods=['GET'])
+def get_pubs_box():
+    query_parameters = request.get_json()
+    # print(f"a {query_parameters}")
+    lat1, lon1, lat2, lon2 = query_parameters["coords"]
+    # print(f"b {lat1} - {lon1} - {lat2} - {lon2}")
+    url = QUERY.format(f"{lat1},{lon1},{lat2},{lon2}")
+
+    # print(f"c - {url}")
+    r = requests.get(url)
+    # print(f"d - {r}")
+    data = r.json()
+    # print(f"c - {data}")
+
+    lst = parse_pubs(data)
+
+    return lst
+    # return "ree"
+
+@app.route('/api/v1/get_pubs_poly', methods=['GET'])
+def get_pubs_poly():
+    query_parameters = request.get_json()
+    lat1, lon1, lat2, lon2, lat3, lon3 = query_parameters["coords"]
+    url = QUERY.format(f"{lat1},{lon1},{lat2},{lon2},{lat3},{lon3}")
+    r = requests.get(url)
+    data = r.json()
+
+    lst = parse_pubs(data)
+
+    return lst
+    pass
 
 
 app.run()
