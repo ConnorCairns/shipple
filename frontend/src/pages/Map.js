@@ -82,26 +82,26 @@ const Map = () => {
             }}>
             <Toolbar />
             <ActualMap />
-            <Container maxWidth="lg" sx={{
+            <Container maxWidth="xl" sx={{
                 display: 'flex', mt: 4, mb: 4, position: 'absolute', top: '50px', pointerEvents: 'none'
             }}>
-                <Grid container spacing={2} sx={{ display: 'flex', pointerEvents: 'auto' }}>
-                    <Grid item xs={12}>
+                <Grid container spacing={2} sx={{ display: 'flex', pointerEvents: 'none' }}>
+                    <Grid item xs={12} sx={{ pointerEvents: 'auto' }}>
                         <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', mt: '0.5rem' }}>
                             <Title>{state.name}</Title>
-                            <Stack direction="row" spacing={2}>
-                                <Paper>{state.responses} responded</Paper>
-                                <Paper>
+                            <Stack direction="row" spacing={2} justifyContent='space-evenly'>
+                                <Paper elevation={0}>{state.responses} responded</Paper>
+                                <Paper elevation={0}>
                                     <DaysToGo></DaysToGo> days to go
                                 </Paper>
-                                <Paper>
+                                <Paper elevation={0}>
                                     Invite link: <a href={state.crawlID}>{state.crawlID}</a>
                                 </Paper>
                             </Stack>
                         </Paper>
                     </Grid>
                     <Grid item xs={2} sx={{ pointerEvents: 'auto' }}>
-                        <Paper>
+                        <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
                             <FormControlLabel control={<Checkbox></Checkbox>} label="Show crawlers" />
                             <Title>Routes:</Title>
                             <ButtonGroup orientation='vertical'>
@@ -112,9 +112,8 @@ const Map = () => {
                             </ButtonGroup>
                         </Paper>
                     </Grid>
-                    {/* <Grid item sx={{marginRight: 'auto', pointerEvents: 'none'}} /> */}
                     <Grid item xs={3} sx={{ marginLeft: 'auto', pointerEvents: 'auto' }}>
-                        <Paper>
+                        <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
                             <AlgorithmTitle></AlgorithmTitle>
                             <Paragraph algorithm='ai'></Paragraph>
                             <Title>Stats:</Title>

@@ -10,15 +10,18 @@ QUERY = """http://www.overpass-api.de/api/interpreter?data=
 (
   node["amenity"="pub"]    ({0});
   way["amenity"="pub"]     ({0});
-  relation["amenity"="pub"]({0});
   node["amenity"="bar"]    ({0});
   way["amenity"="bar"]     ({0});
-  relation["amenity"="bar"]({0});
 );
 out body;
 >;
 out skel qt;"""
 
+def func(coords):
+    return coords
+
+def func2(pubs):
+    return pubs
 
 def parse_pubs(data):
     # print(f"A - {data}")
@@ -37,7 +40,8 @@ def parse_pubs(data):
                         name = pub["tags"]["name"]
                         ways[pub["nodes"][0]] = name
                 else:
-                    nodes[pub["id"]] = pub["nodes"][0]
+                    pass
+                    # nodes[pub["id"]] = pub["nodes"][0]
             else:
                 lat = pub["lat"]
                 long = pub["lon"]
@@ -46,14 +50,14 @@ def parse_pubs(data):
                         name = pub["tags"]["name"]
                     else:
                         name = "NULL"
-                    lst.append([lat ,long, name])
+                    lst.append([name, lat, long])
                     # print(f"{lat} - {long} - {name}")
                 else:
                     nodes[pub["id"]] = [lat, long]
-        elif pub["type"] == "way":
-            if "name" in pub["tags"].keys():
-                name = pub["tags"]["name"]
-                ways[pub["nodes"][0]] = name
+        # elif pub["type"] == "way":
+        #     if "name" in pub["tags"].keys():
+        #         name = pub["tags"]["name"]
+        #         ways[pub["nodes"][0]] = name
 
     for id, name in ways.items():
         lat, long = nodes[id]
@@ -68,12 +72,12 @@ def parse_pubs(data):
 
 
 @app.route('/api/v1/get_pubs_box', methods=['GET'])
-def get_pubs_box():
+def api_get_pubs_box():
     query_parameters = request.get_json()
     # print(f"a {query_parameters}")
     lat1, lon1, lat2, lon2 = query_parameters["coords"]
     # print(f"b {lat1} - {lon1} - {lat2} - {lon2}")
-    url = QUERY.format(f"{lat1},{lon1},{lat2},{lon2}")
+    url = QUERY.format(f'{lat1},{lon1},{lat2},{lon2}')
 
     # print(f"c - {url}")
     r = requests.get(url)
@@ -87,23 +91,50 @@ def get_pubs_box():
     # return "ree"
 
 @app.route('/api/v1/get_pubs_poly', methods=['GET'])
-def get_pubs_poly():
+def api_get_pubs_poly():
     query_parameters = request.get_json()
-    print(f"a {query_parameters}")
+    # print(f"a {query_parameters}")
     coords = query_parameters["coords"]
-    print(f"b {coords}")
-    url = QUERY.format(f"{coords}"[1:-1])
-    print(f"c - {url}")
+    # print(f"b {coords}")
+    tmp = " ".join([str(i) for i in coords])
+    url = QUERY.format(f'poly: "{tmp}"')
+    # print(f"c - {url}")
     r = requests.get(url)
-    print(f"d - {r}")
+    # print(f"d - {r}")
     data = r.json()
-    print(f"e - {data}")
+    # print(f"e - {data}")
 
     lst = parse_pubs(data)
 
     return lst
     # return "ree"
     pass
+
+def get_pubs_poly(coords):
+    # print(f"b {coords}")
+    tmp = " ".join([str(i) for i in coords])
+    url = QUERY.format(f'poly: "{tmp}"')
+    # print(f"c - {url}")
+    r = requests.get(url)
+    # print(f"d - {r}")
+    data = r.json()
+    # print(f"e - {data}")
+
+    lst = parse_pubs(data)
+
+    return lst
+    # return "ree"
+    pass
+
+@app.route('/api/v1/chuckle_brothers', methods=['PUT'])
+def chuckle_brothers():
+    query_parameters = request.get_json()
+    poly = func(query_parameters["coords"])
+    pubs = get_pubs_poly(poly)
+    sPubs = func2(pubs)
+
+    ans = {"coords" : poly, "pubs" : pubs, "selected" : sPubs}
+    return jsonify(ans)
 
 
 app.run()
