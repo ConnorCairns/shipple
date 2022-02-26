@@ -33,4 +33,4 @@ def main(data=None):
 
 
 if __name__ == '__main__':
-    main()
+    out_poly = main()
