@@ -2,6 +2,8 @@ import flask
 import requests
 from flask import request, jsonify
 
+# import pathFinder
+from pathFinder import methods as a
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
@@ -68,7 +70,7 @@ def parse_pubs(data):
     for pub in lst:
         print(f"{pub[1]} - {pub[2]} - {pub[0]}")
 
-    return jsonify(lst)
+    return lst
 
 
 @app.route('/api/v1/get_pubs_box', methods=['GET'])
@@ -89,6 +91,7 @@ def api_get_pubs_box():
 
     return lst
     # return "ree"
+
 
 @app.route('/api/v1/get_pubs_poly', methods=['GET'])
 def api_get_pubs_poly():
@@ -126,14 +129,23 @@ def get_pubs_poly(coords):
     # return "ree"
     pass
 
-@app.route('/api/v1/chuckle_brothers', methods=['PUT'])
+@app.route('/api/v1/chuckle_brothers', methods=['GET'])
 def chuckle_brothers():
+    print("A")
     query_parameters = request.get_json()
-    poly = func(query_parameters["coords"])
+    coordLst = []
+    for i in range(0, len(query_parameters["coords"]), 2):
+        coordLst.append((query_parameters["coords"][i], query_parameters["coords"][i+1]))
+    print("B")
+    poly = func(a.get_poly(coordLst))
+    # poly = func(query_parameters["coords"])
+    print("C")
     pubs = get_pubs_poly(poly)
-    sPubs = func2(pubs)
-
+    sPubs = None
+    # sPubs = func2(pubs)
+    print("D")
     ans = {"coords" : poly, "pubs" : pubs, "selected" : sPubs}
+    print("ans" , ans)
     return jsonify(ans)
 
 if __name__ == "__main__":
