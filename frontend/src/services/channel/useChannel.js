@@ -4,20 +4,17 @@ import SocketContext from './SocketContext'
 
 const useChannel = (name, id) => {
     const socket = useContext(SocketContext)
-    const [, dispatch] = useReducerContext()
+    const [state, dispatch] = useReducerContext()
 
     useEffect(() => {
-        //const c = socket.channel(`game:${id}`, { name: name, client: 'browser', token: token })
-        let res = socket.send(JSON.stringify({
-            'cmd': "SUBSCRIBE",
-            'path': name,
-            'message': 'fosters',
-        }))
-
-        if (res.message !== 'Success') {
-            return null //TODO: do something useful here 
+        if (state.connected) {
+            socket.send(JSON.stringify({
+                'cmd': "SUBSCRIBE",
+                'path': name,
+                'message': 'fosters',
+            }))
         }
-    }, [id, name, socket, dispatch]);
+    }, [id, name, socket, dispatch, state.connected]);
 
     return () => JSON.stringify({
         'cmd': "UNSUBSCRIBE",

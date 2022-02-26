@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import Map from "./pages/Map";
 import Lobby from "./pages/Lobby";
 import useChannel from "./services/channel/useChannel";
+import Test from "./pages/Test";
 
 
 const theme = createTheme({
@@ -28,9 +29,8 @@ function App() {
             <Navbar />
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/crawl" element={<Lobby />} >
-                <Route path="/crawl/:crawlID" />
-              </Route>
+              <Route path="/crawl" element={<Lobby />} />
+              <Route path="/crawl/:crawlID" element={<Test />} />
               <Route path="/map" element={<Map />} />
             </Routes>
           </Router>

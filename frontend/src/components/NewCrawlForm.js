@@ -4,13 +4,14 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { useReducerContext } from '../services/ReducerProvider';
 import Button from '@mui/material/Button';
+import { useNavigate } from 'react-router-dom';
 
 const NewCrawlForm = () => {
     const [state, dispatch] = useReducerContext();
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
-        console.log("submitted!")
-        console.log(state)
+        navigate(`/crawl/${state.name}`)
     }
 
     return (
