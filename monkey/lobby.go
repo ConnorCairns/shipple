@@ -62,6 +62,7 @@ func (e *Env) joinLobby(c *gin.Context) {
 	cookie, remembered := c.Params.Get("remember")
 
 	if err := e.db.Where("slug = ?", c.Param("slug")).First(&lobby).Error; err != nil {
+		log.Printf(c.Param("slug"))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "room not found!"})
 		return
 	}
@@ -73,6 +74,9 @@ func (e *Env) joinLobby(c *gin.Context) {
 	} else {
 		guest.Remember_cookie = randString(64)
 	}
+
+	e.db.Create(&guest)
+	lobby.Guests = append(lobby.Guests, guest)
 
 	c.JSON(200, gin.H{"lobby": lobby, "me": guest})
 }
