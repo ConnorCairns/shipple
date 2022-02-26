@@ -56,6 +56,22 @@ func (c *Client) subscribe(path string) {
 	ch, ok := GetChannelFromPath(path)
 	if ok {
 		ch.register <- c
+
+		msg := Signal{
+			Cmd:    Status,
+			Path:   "",
+			Sender: "sys",
+
+			Message: "success",
+		}
+
+		raw, err := json.Marshal(msg)
+
+		if err != nil {
+			log.Printf("Error connecting client")
+		} else {
+			c.send <- raw
+		}
 	}
 }
 

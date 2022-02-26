@@ -18,27 +18,31 @@ const (
 	// Most messages like this - the handler will look up the "path" and call
 	// a registered
 	Message
+
+	Status
 )
 
 var toString = map[signalType]string{
 	Subscribe:   "SUBSCRIBE",
 	Unsubscribe: "UNSUBSRIBE",
 	Message:     "MESSAGE",
+	Status:      "STATUS",
 }
 
 var toID = map[string]signalType{
 	"SUBSCRIBE":   Subscribe,
 	"UNSUBSCRIBE": Unsubscribe,
 	"MESSAGE":     Message,
+	"STATUS":      Status,
 }
 
 // Signal represents an induvidial message of any type
 type Signal struct {
-	Cmd    signalType
-	Path   string
-	Sender string
+	Cmd    signalType `json:"cmd"`
+	Path   string     `json:"path"`
+	Sender string     `json:"sender"`
 
-	Message string
+	Message string `json:"message"`
 }
 
 func (s *signalType) UnmarshalJSON(data []byte) error {
