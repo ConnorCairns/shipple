@@ -1,4 +1,4 @@
-import { Box, Button, ButtonGroup, Checkbox, Container, FormControlLabel, Grid, Paper, Toolbar } from '@mui/material';
+import { Box, Button, ButtonGroup, Checkbox, Container, FormControlLabel, Grid, Paper, Stack, Toolbar } from '@mui/material';
 import Title from '../components/Title';
 
 const Map = () => {
@@ -19,14 +19,14 @@ const Map = () => {
                 <Grid item xs={12}>
                     <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', mt: '0.5rem' }}>
                         <Title>Event name</Title>
-                        <Grid container spacing={2}>
-                            <Grid item xs={3}>x/y responded</Grid>
-                            <Grid item xs={3}>x days to go</Grid>
-                            <Grid item xs={3}>
+                        <Stack direction="row" spacing={2}>
+                            <Paper>x/y responded</Paper>
+                            <Paper>x days to go</Paper>
+                            <Paper>
                                 <p>invite link:</p>
                                 <a href='http://localhost:3000/'>Share this URL</a>
-                            </Grid>
-                        </Grid>
+                            </Paper>
+                        </Stack>
                     </Paper>
                 </Grid>
                 <Grid item xs={2}>
@@ -53,10 +53,20 @@ const Map = () => {
                         </p>
                         <Title>Stats:</Title>
                         <Grid container spacing={2}>
-                            <Grid item xs={6}>10 tonnes</Grid>
-                            <Grid item xs={6}>£50</Grid>
-                            <Grid item xs={6}>2km walked</Grid>
-                            <Grid item xs={6}>100 pint options</Grid>
+                            <Grid item xs={6}>
+                                <Paper elevation={4}>10 tonnes</Paper>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Paper elevation={4}>
+                                    £50
+                                </Paper>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Paper elevation={4}>2km walked</Paper>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Paper elevation={4}>100 pint options</Paper>
+                            </Grid>
                         </Grid>
                     </Paper>
                 </Grid>
