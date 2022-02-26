@@ -23,6 +23,7 @@ const (
 	Message
 
 	Status
+	Disconnect
 )
 
 var toString = map[signalType]string{
@@ -30,6 +31,7 @@ var toString = map[signalType]string{
 	Unsubscribe: "UNSUBSRIBE",
 	Message:     "MESSAGE",
 	Status:      "STATUS",
+	Disconnect:  "DISCONNECT",
 }
 
 var toID = map[string]signalType{
@@ -37,6 +39,7 @@ var toID = map[string]signalType{
 	"UNSUBSCRIBE": Unsubscribe,
 	"MESSAGE":     Message,
 	"STATUS":      Status,
+	"DISCONNECT":  Disconnect,
 }
 
 // Signal represents an induvidial message of any type
@@ -49,7 +52,6 @@ type Signal struct {
 }
 
 func (s *signalType) UnmarshalJSON(data []byte) error {
-	// Naughty pointer abuse
 	var t string
 
 	err := json.Unmarshal(data, &t)

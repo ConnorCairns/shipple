@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"encoding/json"
 	"sync"
 
 	"log"
@@ -12,6 +13,7 @@ type Channel struct {
 	broadcast  chan []byte
 	register   chan *Client
 	unregister chan *Client
+	path       string
 }
 
 type channelMap struct {
@@ -48,6 +50,7 @@ func newChannel(path string) *Channel {
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
 		clients:    make(map[*Client]bool),
+		path:       path,
 	}
 
 	globalChannelMap.addMapping(path, ch)
@@ -62,10 +65,7 @@ func (s *Channel) run() {
 			s.clients[client] = true
 
 		case client := <-s.unregister:
-			if _, ok := s.clients[client]; ok {
-				delete(s.clients, client)
-				close(client.send)
-			}
+			s.handleUnregister(client)
 
 		case message := <-s.broadcast:
 			for client := range s.clients {
@@ -80,6 +80,26 @@ func (s *Channel) run() {
 	}
 }
 
-func findChannel(channel string) {
+func (s *Channel) handleUnregister(c *Client) {
+	if _, ok := s.clients[c]; ok {
+		delete(s.clients, c)
+		close(c.send)
 
+		if len(s.clients) == 0 {
+			return
+		}
+
+		msg := Signal{
+			Cmd:    Disconnect,
+			Path:   s.path,
+			Sender: c.name,
+		}
+
+		raw, err := json.Marshal(msg)
+		if err != nil {
+			return
+		}
+
+		s.broadcast <- raw
+	}
 }

@@ -39,6 +39,9 @@ type Client struct {
 	conn *websocket.Conn
 
 	send chan []byte
+
+	// Helper stuff
+	name string
 }
 
 func (c *Client) handle(message []byte) {
@@ -56,31 +59,33 @@ func (c *Client) handle(message []byte) {
 
 func (c *Client) subscribe(path string) {
 	ch, ok := GetChannelFromPath(path)
-	if ok {
-		ch.register <- c
+	if !ok {
+		ch = newChannel(path)
+		go ch.run()
+	}
+	ch.register <- c
 
-		msg := Signal{
-			Cmd:    Status,
-			Path:   "",
-			Sender: "sys",
+	msg := Signal{
+		Cmd:    Status,
+		Path:   "",
+		Sender: "sys",
 
-			Message: "success",
-		}
+		Message: "success",
+	}
 
-		raw, err := json.Marshal(msg)
+	raw, err := json.Marshal(msg)
 
-		if err != nil {
-			log.Printf("Error connecting client")
-		} else {
-			c.send <- raw
-		}
+	if err != nil {
+		log.Printf("Error connecting client")
+	} else {
+		c.send <- raw
 	}
 }
 
 func (c *Client) unsubscribe(path string) {
 	ch, ok := GetChannelFromPath(path)
 	if ok {
-		ch.register <- c
+		ch.unregister <- c
 	}
 }
 
@@ -111,6 +116,10 @@ func (c *Client) readPump() {
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
+
+				for ch := range c.channels {
+					ch.unregister <- c
+				}
 			}
 			break
 		}
