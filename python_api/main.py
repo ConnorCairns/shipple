@@ -1,16 +1,109 @@
-# This is a sample Python script.
+import flask
+import requests
+from flask import request, jsonify
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+app = flask.Flask(__name__)
+app.config["DEBUG"] = True
+
+QUERY = """http://www.overpass-api.de/api/interpreter?data=
+[out:json][timeout:25];
+(
+  node["amenity"="pub"]    ({0});
+  way["amenity"="pub"]     ({0});
+  relation["amenity"="pub"]({0});
+  node["amenity"="bar"]    ({0});
+  way["amenity"="bar"]     ({0});
+  relation["amenity"="bar"]({0});
+);
+out body;
+>;
+out skel qt;"""
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def parse_pubs(data):
+    # print(f"A - {data}")
+    query_parameters = data
+
+    # print((query_parameters["elements"][0]["tags"]["name"]))
+    nodes = {}
+    ways = {}
+    lst = []
+    for pub in (query_parameters["elements"]):
+        print(pub)
+        if pub["type"] in ["node", "way"]:
+            if "nodes" in pub.keys():
+                if "tags" in pub.keys():
+                    if "name" in pub["tags"].keys():
+                        name = pub["tags"]["name"]
+                        ways[pub["nodes"][0]] = name
+                else:
+                    nodes[pub["id"]] = pub["nodes"][0]
+            else:
+                lat = pub["lat"]
+                long = pub["lon"]
+                if "tags" in pub.keys():
+                    if "name" in pub["tags"].keys():
+                        name = pub["tags"]["name"]
+                    else:
+                        name = "NULL"
+                    lst.append([lat ,long, name])
+                    # print(f"{lat} - {long} - {name}")
+                else:
+                    nodes[pub["id"]] = [lat, long]
+        elif pub["type"] == "way":
+            if "name" in pub["tags"].keys():
+                name = pub["tags"]["name"]
+                ways[pub["nodes"][0]] = name
+
+    for id, name in ways.items():
+        lat, long = nodes[id]
+        lst.append([name, lat, long])
+
+    # print(lst)
+
+    for pub in lst:
+        print(f"{pub[1]} - {pub[2]} - {pub[0]}")
+
+    return jsonify(lst)
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+@app.route('/api/v1/get_pubs_box', methods=['GET'])
+def get_pubs_box():
+    query_parameters = request.get_json()
+    # print(f"a {query_parameters}")
+    lat1, lon1, lat2, lon2 = query_parameters["coords"]
+    # print(f"b {lat1} - {lon1} - {lat2} - {lon2}")
+    url = QUERY.format(f"{lat1},{lon1},{lat2},{lon2}")
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    # print(f"c - {url}")
+    r = requests.get(url)
+    # print(f"d - {r}")
+    data = r.json()
+    # print(f"c - {data}")
+
+    lst = parse_pubs(data)
+
+    return lst
+    # return "ree"
+
+@app.route('/api/v1/get_pubs_poly', methods=['GET'])
+def get_pubs_poly():
+    query_parameters = request.get_json()
+    print(f"a {query_parameters}")
+    coords = query_parameters["coords"]
+    print(f"b {coords}")
+    url = QUERY.format(f"{coords}"[1:-1])
+    print(f"c - {url}")
+    r = requests.get(url)
+    print(f"d - {r}")
+    data = r.json()
+    print(f"e - {data}")
+
+    lst = parse_pubs(data)
+
+    return lst
+    # return "ree"
+    pass
+
+
+app.run()

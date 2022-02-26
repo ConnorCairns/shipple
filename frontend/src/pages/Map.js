@@ -1,157 +1,143 @@
-import { Box, Toolbar, Container, Grid, Paper } from '@mui/material';
-import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
+import { Box, Button, ButtonGroup, Checkbox, Container, FormControlLabel, Grid, Paper, Stack, Toolbar } from '@mui/material';
 import Title from '../components/Title';
-import { useEffect, useRef, useState } from 'react';
-import '../css/map.css';
-import 'mapbox-gl/dist/mapbox-gl.css';
-
-mapboxgl.accessToken = 'pk.eyJ1IjoiY29ubm9yYyIsImEiOiJjbDA0NGxnaHcwMWF4M2RyeWtvMWdheG1rIn0.HrRQ6pMM4EmEEjVQRu9xLQ';
-
-const pubs = [{ lat: -2.598305, long: 51.456238, name: "Zero Degrees" }, { lat: -2.598908, long: 51.455778, name: "The Ship Inn" }]
-
-const polygon = {
-    "coords": [
-        51.4667912,
-        -2.6117687,
-        51.4681712,
-        -2.6085272,
-        51.46812967288564,
-        -2.607795849093956,
-        51.4638723,
-        -2.6079594,
-        51.4580167,
-        -2.6102795,
-        51.45468768594371,
-        -2.613037759684077,
-        51.4555685,
-        -2.6147229,
-        51.4600108,
-        -2.6167261,
-        51.46477753993079,
-        -2.6157319485217987,
-        51.4667912,
-        -2.6117687
-    ]
-}
+import { useReducerContext } from '../services/ReducerProvider';
+import ActualMap from '../components/ActualMap';
 
 
-const convertPolygon = (polygon) => {
-    let new_polygon = []
+function Paragraph() {
+    const [state, dispatch] = useReducerContext()
 
-    for (let i = 0; i < polygon.coords.length; i += 2) {
-        new_polygon.push([polygon.coords[i+1], polygon.coords[i]])
+    switch (state.algorithm) {
+        case 'ai':
+            return (
+                <p>
+                    The AI approach does some kind of machine learning...
+                </p>
+            )
+        case 'kMeans':
+            return (
+                <p>
+                    K means is a clustering algorithm that assigns datapoints to cluster centres.
+                </p>
+            )
+        case 'fosters':
+            return (
+                <p>
+                    This algorithm prioritises pubs that sell Fosters beer.
+                </p>
+            )
+        case 'tsp':
+            return (
+                <p>
+                    This is another algorithm...
+                </p>
+            )
+        default:
+            return <p></p>
     }
-
-    return new_polygon
 }
+
+
+function AlgorithmTitle() {
+    const [state, dispatch] = useReducerContext()
+
+    switch (state.algorithm) {
+        case 'ai':
+            return <Title>AI Algorithm:</Title>
+        case 'kMeans':
+            return <Title>K Means Algorithm:</Title>
+        case 'fosters':
+            return <Title>Fosters Algorithm:</Title>
+        case 'tsp':
+            return <Title>TSP Algorithm:</Title>
+        default:
+            return <Title></Title>
+    }
+}
+
+
+function DaysToGo() {
+    const [state, dispatch] = useReducerContext()
+    const today = new Date()
+    const diffTime = Math.abs(today - state.date)
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    return diffDays
+}
+
 
 const Map = () => {
-    const mapContainer = useRef(null);
-    const map = useRef(null);
-    const [lng, setLng] = useState(-2.598305);
-    const [lat, setLat] = useState(51.456238);
-    const [zoom, setZoom] = useState(15);
+    const [state, dispatch] = useReducerContext()
 
-    const addPubMarkers = () => {
-        pubs.forEach(pub => {
-            const el = document.createElement('div');
-            el.className = 'marker';
-
-            const popup = new mapboxgl.Popup({ offset: 25 }).setText(
-                pub.name
-            );
-
-            new mapboxgl.Marker(el)
-                .setLngLat([pub.lat, pub.long])
-                .setPopup(popup)
-                .addTo(map.current);
-        })
-    }
-
-    const addPolygons = () => {
-        const new_polygon = [convertPolygon(polygon)]
-
-        map.current.addSource('maine', {
-            'type': 'geojson',
-            'data': {
-                'type': 'Feature',
-                'geometry': {
-                    'type': 'Polygon',
-                    'coordinates': new_polygon,
-                },
-            },
-        })
-
-        map.current.addLayer({
-            'id': 'maine',
-            'type': 'fill',
-            'source': 'maine', // reference the data source
-            'layout': {},
-            'paint': {
-                'fill-color': '#0080ff', // blue color fill
-                'fill-opacity': 0.5
-            }
-        });
-        // Add a black outline around the polygon.
-        map.current.addLayer({
-            'id': 'outline',
-            'type': 'line',
-            'source': 'maine',
-            'layout': {},
-            'paint': {
-                'line-color': '#000',
-                'line-width': 3
-            }
-        });
-}
-
-useEffect(() => {
-    if (map.current) return; // initialize map only once
-    map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: [lng, lat],
-        zoom: zoom
-    });
-
-    map.current.on('load', () => {
-        addPubMarkers()
-        addPolygons()
-    })
-
-});
-
-useEffect(() => {
-    if (!map.current) return; // wait for map to initialize
-    map.current.on('move', () => {
-        setLng(map.current.getCenter().lng.toFixed(4));
-        setLat(map.current.getCenter().lat.toFixed(4));
-        setZoom(map.current.getZoom().toFixed(2));
-    });
-});
-
-return (
-    <Box component="main"
-        sx={{
-            backgroundColor: (theme) =>
-                theme.palette.mode === 'light'
-                    ? theme.palette.grey[100]
-                    : theme.palette.grey[900],
-            flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
-        }}>
-        <Toolbar />
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', mt: '0.5rem' }}>
-                <Title>Map</Title>
-                <div>
-                    <div ref={mapContainer} className="map-container" />
-                </div>
-            </Paper>
-        </Container>
-    </Box>
-)
+    return (
+        <Box component="main"
+            sx={{
+                backgroundColor: (theme) =>
+                    theme.palette.mode === 'light'
+                        ? theme.palette.grey[100]
+                        : theme.palette.grey[900],
+                flexGrow: 1,
+                height: '100vh',
+                overflow: 'auto',
+                position: 'relative'
+            }}>
+            <Toolbar />
+            <ActualMap />
+            <Container maxWidth="lg" sx={{
+                display: 'flex', mt: 4, mb: 4, position: 'absolute', top: '50px', pointerEvents: 'none'
+            }}>
+                <Grid container spacing={2} sx={{ display: 'flex', pointerEvents: 'auto' }}>
+                    <Grid item xs={12}>
+                        <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', mt: '0.5rem' }}>
+                            <Title>{state.name}</Title>
+                            <Stack direction="row" spacing={2}>
+                                <Paper>{state.responses} responded</Paper>
+                                <Paper>
+                                    <DaysToGo></DaysToGo> days to go
+                                </Paper>
+                                <Paper>
+                                    Invite link: <a href={state.crawlID}>{state.crawlID}</a>
+                                </Paper>
+                            </Stack>
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={2} sx={{ pointerEvents: 'auto' }}>
+                        <Paper>
+                            <FormControlLabel control={<Checkbox></Checkbox>} label="Show crawlers" />
+                            <Title>Routes:</Title>
+                            <ButtonGroup orientation='vertical'>
+                                <Button onClick={() => dispatch({ type: 'updateAlgorithm', payload: "ai" })}>AI</Button>
+                                <Button onClick={() => dispatch({ type: 'updateAlgorithm', payload: "kMeans" })}>K Means</Button>
+                                <Button onClick={() => dispatch({ type: 'updateAlgorithm', payload: "fosters" })}>Fosters</Button>
+                                <Button onClick={() => dispatch({ type: 'updateAlgorithm', payload: "tsp" })}>TSP</Button>
+                            </ButtonGroup>
+                        </Paper>
+                    </Grid>
+                    {/* <Grid item sx={{marginRight: 'auto', pointerEvents: 'none'}} /> */}
+                    <Grid item xs={3} sx={{ marginLeft: 'auto', pointerEvents: 'auto' }}>
+                        <Paper>
+                            <AlgorithmTitle></AlgorithmTitle>
+                            <Paragraph algorithm='ai'></Paragraph>
+                            <Title>Stats:</Title>
+                            <Grid container spacing={2}>
+                                <Grid item xs={6}>
+                                    <Paper elevation={4}>{state.carbon} tonnes of carbon</Paper>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Paper elevation={4}>£{state.uberSavings} saved on Ubers</Paper>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Paper elevation={4}>{state.walkingDist}km walked</Paper>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Paper elevation={4}>{state.pintOptions} pint options</Paper>
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                    </Grid>
+                </Grid>
+            </Container>
+        </Box>
+    )
 }
 
 export default Map
