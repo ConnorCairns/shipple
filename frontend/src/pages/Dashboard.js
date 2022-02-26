@@ -1,7 +1,10 @@
 import { Box, Toolbar, Container, Paper } from '@mui/material';
 import Title from '../components/Title';
+import { useReducerContext } from '../services/ReducerProvider';
 
 const Dashboard = () => {
+    const [state, dispatch] = useReducerContext()
+    console.log(state)
 
     return (
         <Box component="main"
@@ -18,7 +21,7 @@ const Dashboard = () => {
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', mt: '0.5rem' }}>
                     <Title>Dashboard</Title>
-                    <p>lorem ipsym lorem ipsymlorem ipsymlorem ipsymlorem ipsymlorem ipsym</p>
+                    <p onClick={() => dispatch({type: 'increment'})}>lorem ipsym lorem ipsymlorem ipsymlorem ipsymlorem ipsymlorem ipsym</p>
                 </Paper>
             </Container>
         </Box>
