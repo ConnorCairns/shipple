@@ -136,5 +136,5 @@ def chuckle_brothers():
     ans = {"coords" : poly, "pubs" : pubs, "selected" : sPubs}
     return jsonify(ans)
 
-
-app.run()
+if __name__ == "__main__":
+    app.run()
