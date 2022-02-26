@@ -5,7 +5,6 @@ import reportWebVitals from './reportWebVitals';
 import { ReducerProvider } from "./services/ReducerProvider";
 import { initialState, reducer } from "./services/reducer";
 import SocketProvider from "./services/channel/SocketProvider";
-import SocketContext from "./services/channel/SocketContext";
 
 ReactDOM.render(
   <React.StrictMode>

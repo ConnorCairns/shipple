@@ -12,8 +12,15 @@ const SocketProvider = ({ wsUrl, children }) => {
         const s = new WebSocket(wsUrl)
         setSocket(s)
 
+        s.onopen = (event) => {
+            dispatch({ type: 'connected' })
+        }
+
         s.onmessage = (event) => {
-            dispatch({ type: event.message.type, payload: event.message.payload })
+            const data = JSON.parse(event.data)
+            console.log(data)
+
+            dispatch({ type: data.cmd, payload: data.message })
         }
 
     }, [wsUrl, dispatch])
