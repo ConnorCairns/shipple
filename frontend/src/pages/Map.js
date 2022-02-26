@@ -79,24 +79,24 @@ const Map = () => {
             overflow: 'auto',
         }}>
         <Toolbar />
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Container maxWidth="xl" sx={{ mt: 2, mb: 2 }}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', mt: '0.5rem' }}>
                         <Title>{state.name}</Title>
-                        <Stack direction="row" spacing={2}>
-                            <Paper>{state.responses} responded</Paper>
-                            <Paper>
+                        <Stack direction="row" spacing={2} justifyContent='space-evenly'>
+                            <Paper elevation={0}>{state.responses} responded</Paper>
+                            <Paper elevation={0}>
                                 <DaysToGo></DaysToGo> days to go
                             </Paper>
-                            <Paper>
+                            <Paper elevation={0}>
                                 Invite link: <a href={state.crawlID}>{state.crawlID}</a>
                             </Paper>
                         </Stack>
                     </Paper>
                 </Grid>
                 <Grid item xs={2}>
-                    <Paper>
+                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
                         <FormControlLabel control={<Checkbox></Checkbox>} label="Show crawlers" />
                         <Title>Routes:</Title>
                         <ButtonGroup orientation='vertical'>
@@ -111,7 +111,7 @@ const Map = () => {
                     <Paper>Map</Paper>
                 </Grid>
                 <Grid item xs={3}>
-                    <Paper>
+                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
                         <AlgorithmTitle></AlgorithmTitle>
                         <Paragraph algorithm='ai'></Paragraph>
                         <Title>Stats:</Title>
