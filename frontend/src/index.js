@@ -2,11 +2,19 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { ReducerProvider } from "./services/ReducerProvider";
+import { initialState, reducer } from "./services/reducer";
+import SocketProvider from "./services/channel/SocketProvider";
+import SocketContext from "./services/channel/SocketContext";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+    <ReducerProvider initialState={initialState} reducer={reducer} >
+      <SocketProvider wsUrl="ws://localhost:8080/ws" >
+        <App />
+      </SocketProvider>
+    </ReducerProvider>
+  </React.StrictMode >,
   document.getElementById('root')
 );
 
