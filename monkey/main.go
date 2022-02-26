@@ -47,7 +47,8 @@ func main() {
 
 	api := r.Group("/api")
 	api.POST("/lobby", ctx.createLobby)
-	api.GET("/lobby/:slug", ctx.getLobby)
+	api.GET("/lobby/:slug", ctx.getRemebered)
+	api.POST("/lobby/:slug", ctx.joinLobby)
 
 	err = r.Run(":" + port)
 

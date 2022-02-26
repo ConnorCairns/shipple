@@ -6,7 +6,6 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
-	"os"
 
 	"github.com/ConnorCairns/shipple/monkey/models"
 	"github.com/gin-gonic/gin"
@@ -80,7 +79,7 @@ func (e *Env) joinLobby(c *gin.Context) {
 
 func (e *Env) calcCrawl(c *gin.Context) {
 	var lobby models.Lobby
-	remoteUrl := os.Getenv("ML_URL") + "/api/fucktom"
+	remoteUrl := "https://shipple-ml.fly.dev" + "/api/v1/chuckle_brothers"
 
 	if err := e.db.Where("slug = ?", c.Param("slug")).First(&lobby).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "room not found!"})
