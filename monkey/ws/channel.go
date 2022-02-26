@@ -1,6 +1,10 @@
 package ws
 
-import "sync"
+import (
+	"sync"
+
+	"log"
+)
 
 // Channel allows clients to subscribe to different topics
 type Channel struct {
@@ -17,7 +21,8 @@ type channelMap struct {
 
 var globalChannelMap channelMap
 
-func Init() {
+func init() {
+	log.Print("Initing websockets")
 	globalChannelMap = channelMap{
 		chanMap: make(map[string]*Channel),
 	}

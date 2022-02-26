@@ -2,6 +2,7 @@ package ws
 
 import (
 	"bytes"
+	"encoding/json"
 	"log"
 	"net/http"
 	"time"
@@ -159,4 +160,17 @@ func ServeWs(w http.ResponseWriter, r *http.Request) {
 	// Start our readers and writers for our clients in seperate Goroutines
 	go client.writePump()
 	go client.readPump()
+
+	msg := Signal{
+		Cmd:    Message,
+		Path:   "",
+		Sender: "sys",
+
+		Message: "connected",
+	}
+
+	raw, err := json.Marshal(msg)
+
+	client.send <- raw
+
 }
