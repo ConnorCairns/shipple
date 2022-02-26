@@ -1,6 +1,9 @@
 package ws
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type signalType int
 
@@ -58,6 +61,15 @@ func (s *signalType) UnmarshalJSON(data []byte) error {
 		*s = v
 	}
 	return nil
+}
+
+func (s signalType) MarshallJSON() ([]byte, error) {
+	if s, ok := toString[s]; ok {
+		return json.Marshal(s)
+	}
+
+	return nil, fmt.Errorf("unknown message type")
+
 }
 
 // FromBytes creates a signal from the raw WebSocket bytes
