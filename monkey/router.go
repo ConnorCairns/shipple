@@ -5,5 +5,6 @@ import (
 )
 
 var route = map[string]func(sig *s.Signal) error{
-	"": func(sig *s.Signal) error { return nil },
+	"":     func(sig *s.Signal) error { return nil },
+	"room": func(sig *s.Signal) error { return nil },
 }

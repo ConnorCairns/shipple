@@ -44,7 +44,7 @@ func (c *Client) handle(message []byte) {
 
 	switch s.Cmd {
 	case signal.Message:
-		log.Println("Received Message")
+		c.sendToChannel(s.Path, []byte(s.Message))
 	case signal.Subscribe:
 		c.subscribe(s.Path)
 	case signal.Unsubscribe:
@@ -53,11 +53,24 @@ func (c *Client) handle(message []byte) {
 }
 
 func (c *Client) subscribe(path string) {
-
+	ch, ok := GetChannelFromPath(path)
+	if ok {
+		ch.register <- c
+	}
 }
 
 func (c *Client) unsubscribe(path string) {
+	ch, ok := GetChannelFromPath(path)
+	if ok {
+		ch.register <- c
+	}
+}
 
+func (c *Client) sendToChannel(path string, data []byte) {
+	ch, ok := GetChannelFromPath(path)
+	if ok {
+		ch.broadcast <- data
+	}
 }
 
 // readPump pumps messages from the WebSocket connection to the channel
