@@ -1,11 +1,15 @@
 export const initialState = {
     connected: false,
-    date: new Date(),
+    date: new Date("2/27/2022"),
     crawlName: "",
     userName: "",
     walkingDist: 10,
-    crawlID: "",
-    algorithm: "ai"
+    carbon: 10,
+    uberSavings: 50,
+    pintOptions: 100,
+    crawlID: "https://youtu.be/dQw4w9WgXcQ",
+    algorithm: "ai",
+    responses: 10
 }
 
 export const reducer = (state, action) => {
