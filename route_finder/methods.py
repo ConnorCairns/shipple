@@ -1,3 +1,4 @@
+from data import save_center
 from scipy import stats
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -21,12 +22,10 @@ def format_data(coords_list=None):
         kd = (51.462553, -2.597698)
         coords_list = [mvb, cd, kd]
 
-        # Random number generator
+        # Random number generator (TO DO)
         # np.random.seed(69)
         # generated = np.random.normal(loc=0, scale=1, size=(5,2))
         # print(generated+coords_list)
-
-    # Find row-wise means
 
     # Standardise data to mean = 0, std = 1
     standard = stats.zscore(coords_list, axis=0)
@@ -37,8 +36,10 @@ def format_data(coords_list=None):
     # remove NaNs (only NaNs are not equal to themselves)
     feasible_coords = filter(lambda v: v == v, z)
 
+    # remove any recurring values
     feasible_coords = list(set(feasible_coords))
 
+    # Find row-wise mean
     mean = np.mean(feasible_coords, axis=0)
 
     return mean, feasible_coords
@@ -99,6 +100,7 @@ def make_intersect(coords, map_):
         polys = [get_isochrone(map_, coord, walk_time=walking_time) for coord in coords]
         intersection_ = check_intersect(polys)
 
+    save_center('temps/temp_center', intersection_.centroid)
     walking_time = walking_time + 3
     polys = [get_isochrone(map_, coord, walk_time=walking_time) for coord in coords]
     intersection_ = check_intersect(polys)
@@ -151,3 +153,12 @@ def plot_iso_map(G, polys, intersect=None):
         plt.fill(*intersect.exterior.xy, fc='g', alpha=0.2)
 
     plt.show()
+
+
+####### Pub search stuff #######
+
+
+def pub_path(pubs_df, centroid):
+    # calculates an array of the
+    pubs_df['dist_to_centroid'] = [np.linalg.norm(centroid - np.array([pubs_df['lat'][i], pubs_df['long'][i]]))
+                                   for i in range(len(pubs_df))]
