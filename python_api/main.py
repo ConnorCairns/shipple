@@ -89,7 +89,7 @@ def api_get_pubs_box():
 
     lst = parse_pubs(data)
 
-    return lst
+    return jsonify(lst)
     # return "ree"
 
 
@@ -109,7 +109,7 @@ def api_get_pubs_poly():
 
     lst = parse_pubs(data)
 
-    return lst
+    return jsonify(lst)
     # return "ree"
     pass
 
