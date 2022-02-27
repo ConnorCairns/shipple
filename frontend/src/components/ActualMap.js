@@ -1,46 +1,24 @@
 import { Box, Toolbar, Container, Paper } from '@mui/material';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import Title from '../components/Title';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import '../css/map.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import useChannel from '../services/channel/useChannel';
 import { useParams } from 'react-router';
+import { useReducerContext } from '../services/ReducerProvider';
+import useSocket from '../services/channel/useSocket';
+import SocketContext from '../services/channel/SocketContext';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiY29ubm9yYyIsImEiOiJjbDA0NGxnaHcwMWF4M2RyeWtvMWdheG1rIn0.HrRQ6pMM4EmEEjVQRu9xLQ';
 
-const pubs = [{ lat: -2.598305, long: 51.456238, name: "Zero Degrees" }, { lat: -2.598908, long: 51.455778, name: "The Ship Inn" }]
-
-const polygon = {
-    "coords": [
-        51.4667912,
-        -2.6117687,
-        51.4681712,
-        -2.6085272,
-        51.46812967288564,
-        -2.607795849093956,
-        51.4638723,
-        -2.6079594,
-        51.4580167,
-        -2.6102795,
-        51.45468768594371,
-        -2.613037759684077,
-        51.4555685,
-        -2.6147229,
-        51.4600108,
-        -2.6167261,
-        51.46477753993079,
-        -2.6157319485217987,
-        51.4667912,
-        -2.6117687
-    ]
-}
+// const pubs = [{ lat: -2.598305, long: 51.456238, name: "Zero Degrees" }, { lat: -2.598908, long: 51.455778, name: "The Ship Inn" }]
 
 const convertPolygon = (polygon) => {
     let new_polygon = []
 
-    for (let i = 0; i < polygon.coords.length; i += 2) {
-        new_polygon.push([polygon.coords[i + 1], polygon.coords[i]])
+    for (let i = 0; i < polygon.length; i += 2) {
+        new_polygon.push([polygon[i + 1], polygon[i]])
     }
 
     return new_polygon
@@ -53,29 +31,46 @@ const ActualMap = () => {
     const [lat, setLat] = useState(51.456238);
     const [zoom, setZoom] = useState(15);
     const params = useParams()
+    const [state, dispatch] = useReducerContext()
+    const socket = useContext(SocketContext)
 
-    const UNSUBSCRIBE = useChannel(params.crawlID, 123)    
+
+
+    useEffect(() => {
+        const heartbeat = () => {
+            if (!socket) return
+            if (socket.readyState !== 1) return
+            socket.send("heartbeat")
+            setTimeout(heartbeat, 500)
+        }
+
+        heartbeat()
+    }, [])
+
+    const UNSUBSCRIBE = useChannel(params.crawlID, 123)
 
     const addPubMarkers = () => {
-        pubs.forEach(pub => {
+        state.pubs.forEach(pub => {
             const el = document.createElement('div');
             el.className = 'marker';
 
             const popup = new mapboxgl.Popup({ offset: 25 }).setText(
-                pub.name
+                pub[0]
             );
 
             new mapboxgl.Marker(el)
-                .setLngLat([pub.lat, pub.long])
+                .setLngLat([pub[2], pub[1]])
                 .setPopup(popup)
                 .addTo(map.current);
         })
     }
 
-    const addPolygons = () => {
-        const new_polygon = [convertPolygon(polygon)]
+    const addPolygons = (name) => {
+        const new_polygon = [convertPolygon(state.polygons)]
 
-        map.current.addSource('maine', {
+        console.log(new_polygon)
+
+        map.current.addSource(name, {
             'type': 'geojson',
             'data': {
                 'type': 'Feature',
@@ -87,9 +82,9 @@ const ActualMap = () => {
         })
 
         map.current.addLayer({
-            'id': 'maine',
+            'id': name,
             'type': 'fill',
-            'source': 'maine', // reference the data source
+            'source': name, // reference the data source
             'layout': {},
             'paint': {
                 'fill-color': '#0080ff', // blue color fill
@@ -98,9 +93,9 @@ const ActualMap = () => {
         });
         // Add a black outline around the polygon.
         map.current.addLayer({
-            'id': 'outline',
+            'id': `outline${state.polygons.length}`,
             'type': 'line',
-            'source': 'maine',
+            'source': name,
             'layout': {},
             'paint': {
                 'line-color': '#000',
@@ -108,6 +103,20 @@ const ActualMap = () => {
             }
         });
     }
+
+    useEffect(() => {
+        if (!map.current) return
+        if (state.polygons !== []) {
+            addPolygons(`kms${state.polygons.length}`)
+        }
+    }, [state.polygons])
+
+    useEffect(() => {
+        if (!map.current) return
+        if (state.pubs !== []) {
+            addPubMarkers()
+        }
+    }, [state.pubs])
 
     useEffect(() => {
         if (map.current) return; // initialize map only once
@@ -121,7 +130,7 @@ const ActualMap = () => {
         map.current.on('load', () => {
             map.current.resize()
             addPubMarkers()
-            addPolygons()
+            addPolygons("maine")
         })
 
     });
@@ -146,13 +155,13 @@ const ActualMap = () => {
             overflow: 'auto',
             pointerEvents: 'auto'
         }}>
-            <Container disableGutters maxWidth="lg" sx={{ mt: 0, mb: 0, mr:0, ml:0, display: 'absolute', flexDirection: 'column' }}>
-                    <div>
-                        <div ref={mapContainer} className="map-container" />
-                    </div>
+            <Container disableGutters maxWidth="lg" sx={{ mt: 0, mb: 0, mr: 0, ml: 0, display: 'absolute', flexDirection: 'column' }}>
+                <div>
+                    <div ref={mapContainer} className="map-container" />
+                </div>
             </Container>
         </Box>
-        )
+    )
 }
 
 export default ActualMap

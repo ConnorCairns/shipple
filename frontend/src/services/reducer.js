@@ -11,7 +11,7 @@ export const initialState = {
     algorithm: "ai",
     responses: 10,
     postcode: "",
-    polygons: {},
+    polygons: [],
     pubs: [],
     guests: 0
 }
@@ -36,7 +36,7 @@ export const reducer = (state, action) => {
             return {...state, postcode: action.payload}
         case 6: //tom
             console.log(action.payload)
-            return {...state, polygons: {}, pubs: {}}
+            return {...state, polygons: action.payload.coords, pubs: action.payload.pubs}
         case 'updateGuests':
             return {...state, guests: action.payload}
         default:
