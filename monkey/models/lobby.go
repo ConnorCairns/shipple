@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type Lobby struct {
@@ -25,7 +26,7 @@ func CalculateCrawl(path string, db *gorm.DB) []byte {
 	var lobby Lobby
 	remoteUrl := "https://shipple-ml.fly.dev" + "/api/v1/chuckle_brothers"
 
-	if err := db.Where("slug = ?", path).First(&lobby).Error; err != nil {
+	if err := db.Preload("Admin.LastKnownLocation").Preload("Guests.LastKnownLocation").Preload(clause.Associations).Where("slug = ?", path).First(&lobby).Error; err != nil {
 		log.Println("Could not find room")
 		return nil
 	}
@@ -34,12 +35,12 @@ func CalculateCrawl(path string, db *gorm.DB) []byte {
 
 	all_coords := make([]float64, number_of_coords)
 
-	for i := 0; i < number_of_coords; i += 2 {
+	for i := 0; i < number_of_coords-2; i += 2 {
 		all_coords[i] = lobby.Guests[i].LastKnownLocation.Latitude
-		all_coords[i+1] = lobby.Guests[i].LastKnownLocation.Latitude
+		all_coords[i+1] = lobby.Guests[i].LastKnownLocation.Longitude
 	}
 
-	log.Println("Made coords")
+	log.Println(all_coords)
 
 	postBody, err := json.Marshal(gin.H{"coords": all_coords})
 	responseBody := bytes.NewBuffer(postBody)
