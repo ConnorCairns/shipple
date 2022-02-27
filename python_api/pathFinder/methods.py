@@ -168,7 +168,7 @@ def get_poly(data):
     poly_list = [item for sublist in poly_list for item in sublist]
     print("6")
     # out = json.dumps({'coords': poly_list}, sort_keys=True, indent=4)
-    print(poly_list)
+    # print(poly_list)
 
     plot = False
     if plot:
@@ -185,7 +185,7 @@ def parse_pubs(data):
     ways = {}
     lst = []
     for pub in (query_parameters["elements"]):
-        print(pub)
+        # print(pub)
         if pub["type"] in ["node", "way"]:
             if "nodes" in pub.keys():
                 if "tags" in pub.keys():

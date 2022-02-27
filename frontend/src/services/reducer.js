@@ -35,6 +35,7 @@ export const reducer = (state, action) => {
         case 'updatePostcode':
             return {...state, postcode: action.payload}
         case 6: //tom
+            console.log(action.payload)
             return {...state, polygons: {}, pubs: {}}
         case 'updateGuests':
             return {...state, guests: action.payload}

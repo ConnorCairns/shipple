@@ -76,6 +76,7 @@ def get_pubs_poly(coords):
 def chuckle_brothers():
     print("A")
     query_parameters = request.get_json()
+    print(query_parameters)
     coordLst = []
     for i in range(0, len(query_parameters["coords"]), 2):
         coordLst.append((query_parameters["coords"][i], query_parameters["coords"][i+1]))
