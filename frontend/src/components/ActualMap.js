@@ -4,6 +4,8 @@ import Title from '../components/Title';
 import { useEffect, useRef, useState } from 'react';
 import '../css/map.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import useChannel from '../services/channel/useChannel';
+import { useParams } from 'react-router';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiY29ubm9yYyIsImEiOiJjbDA0NGxnaHcwMWF4M2RyeWtvMWdheG1rIn0.HrRQ6pMM4EmEEjVQRu9xLQ';
 
@@ -34,7 +36,6 @@ const polygon = {
     ]
 }
 
-
 const convertPolygon = (polygon) => {
     let new_polygon = []
 
@@ -51,6 +52,9 @@ const ActualMap = () => {
     const [lng, setLng] = useState(-2.598305);
     const [lat, setLat] = useState(51.456238);
     const [zoom, setZoom] = useState(15);
+    const params = useParams()
+
+    const UNSUBSCRIBE = useChannel(params.crawlID, 123)    
 
     const addPubMarkers = () => {
         pubs.forEach(pub => {
@@ -115,6 +119,7 @@ const ActualMap = () => {
         });
 
         map.current.on('load', () => {
+            map.current.resize()
             addPubMarkers()
             addPolygons()
         })
@@ -141,7 +146,7 @@ const ActualMap = () => {
             overflow: 'auto',
             pointerEvents: 'auto'
         }}>
-            <Container disableGutters maxWidth="lg" sx={{ mt: 0, mb: 0, display: 'absolute', flexDirection: 'column' }}>
+            <Container disableGutters maxWidth="lg" sx={{ mt: 0, mb: 0, mr:0, ml:0, display: 'absolute', flexDirection: 'column' }}>
                     <div>
                         <div ref={mapContainer} className="map-container" />
                     </div>
