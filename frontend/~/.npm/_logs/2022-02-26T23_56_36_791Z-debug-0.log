@@ -1,0 +1,88 @@
+0 verbose cli [
+0 verbose cli   '/opt/homebrew/Cellar/node/17.6.0/bin/node',
+0 verbose cli   '/opt/homebrew/bin/npm',
+0 verbose cli   'install',
+0 verbose cli   'react-mapbox-gl',
+0 verbose cli   'mapbox-gl',
+0 verbose cli   '--save'
+0 verbose cli ]
+1 info using npm@8.5.2
+2 info using node@v17.6.0
+3 timing npm:load:whichnode Completed in 0ms
+4 timing config:load:defaults Completed in 0ms
+5 timing config:load:file:/opt/homebrew/lib/node_modules/npm/npmrc Completed in 2ms
+6 timing config:load:builtin Completed in 2ms
+7 timing config:load:cli Completed in 2ms
+8 timing config:load:env Completed in 0ms
+9 timing config:load:file:/Users/paolo/Dropbox/Bristol-Uni/Hackathon/shipple/frontend/.npmrc Completed in 0ms
+10 timing config:load:project Completed in 2ms
+11 timing config:load:file:/Users/paolo/Dropbox/Bristol-Uni/Hackathon/shipple/frontend/~/.npmrc Completed in 0ms
+12 timing config:load:user Completed in 0ms
+13 timing config:load:file:/opt/homebrew/etc/npmrc Completed in 0ms
+14 timing config:load:global Completed in 0ms
+15 timing config:load:validate Completed in 0ms
+16 timing config:load:credentials Completed in 1ms
+17 timing config:load:setEnvs Completed in 0ms
+18 timing config:load Completed in 7ms
+19 timing npm:load:configload Completed in 7ms
+20 timing npm:load:setTitle Completed in 2ms
+21 timing config:load:flatten Completed in 1ms
+22 timing npm:load:display Completed in 2ms
+23 verbose logfile /Users/paolo/Dropbox/Bristol-Uni/Hackathon/shipple/frontend/~/.npm/_logs/2022-02-26T23_56_36_791Z-debug-0.log
+24 timing npm:load:logFile Completed in 2ms
+25 timing npm:load:timers Completed in 0ms
+26 timing npm:load:configScope Completed in 0ms
+27 timing npm:load Completed in 14ms
+28 timing arborist:ctor Completed in 0ms
+29 timing idealTree:init Completed in 294ms
+30 timing idealTree:userRequests Completed in 2ms
+31 silly idealTree buildDeps
+32 silly fetch manifest mapbox-gl@^2.7.0
+33 timing arborist:ctor Completed in 0ms
+34 http fetch GET 200 https://registry.npmjs.org/mapbox-gl 1098ms (cache miss)
+35 silly fetch manifest react-mapbox-gl@*
+36 http fetch GET 200 https://registry.npmjs.org/react-mapbox-gl 1183ms (cache miss)
+37 silly fetch manifest mapbox-gl@^1.12.0
+38 timing idealTree Completed in 2596ms
+39 timing command:install Completed in 2598ms
+40 verbose stack Error: unable to resolve dependency tree
+40 verbose stack     at Arborist.[failPeerConflict] (/opt/homebrew/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/build-ideal-tree.js:1398:25)
+40 verbose stack     at Arborist.[loadPeerSet] (/opt/homebrew/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/build-ideal-tree.js:1364:34)
+40 verbose stack     at async Arborist.[buildDepStep] (/opt/homebrew/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/build-ideal-tree.js:950:11)
+40 verbose stack     at async Arborist.buildIdealTree (/opt/homebrew/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/build-ideal-tree.js:216:7)
+40 verbose stack     at async Promise.all (index 1)
+40 verbose stack     at async Arborist.reify (/opt/homebrew/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:153:5)
+40 verbose stack     at async Install.exec (/opt/homebrew/lib/node_modules/npm/lib/commands/install.js:156:5)
+40 verbose stack     at async module.exports (/opt/homebrew/lib/node_modules/npm/lib/cli.js:66:5)
+41 verbose cwd /Users/paolo/Dropbox/Bristol-Uni/Hackathon/shipple/frontend
+42 verbose Darwin 21.2.0
+43 verbose argv "/opt/homebrew/Cellar/node/17.6.0/bin/node" "/opt/homebrew/bin/npm" "install" "react-mapbox-gl" "mapbox-gl" "--save"
+44 verbose node v17.6.0
+45 verbose npm  v8.5.2
+46 error code ERESOLVE
+47 error ERESOLVE unable to resolve dependency tree
+48 error
+49 error While resolving: [1mfrontend[22m@[1m0.1.0[22m
+49 error Found: [1mmapbox-gl[22m@[1m2.7.0[22m[2m[22m
+49 error [2mnode_modules/mapbox-gl[22m
+49 error   [1mmapbox-gl[22m@"[1m^2.7.0[22m" from the root project
+49 error
+49 error Could not resolve dependency:
+49 error [35mpeer[39m [1mmapbox-gl[22m@"[1m^1.12.0[22m" from [1mreact-mapbox-gl[22m@[1m5.1.1[22m[2m[22m
+49 error [2mnode_modules/react-mapbox-gl[22m
+49 error   [1mreact-mapbox-gl[22m@"[1m*[22m" from the root project
+49 error
+49 error Fix the upstream dependency conflict, or retry
+49 error this command with --force, or --legacy-peer-deps
+49 error to accept an incorrect (and potentially broken) dependency resolution.
+49 error
+49 error See /Users/paolo/Dropbox/Bristol-Uni/Hackathon/shipple/frontend/~/.npm/eresolve-report.txt for a full report.
+50 verbose exit 1
+51 timing npm Completed in 2753ms
+52 verbose unfinished npm timer reify 1645919796938
+53 verbose unfinished npm timer reify:loadTrees 1645919796939
+54 verbose unfinished npm timer idealTree:buildDeps 1645919797236
+55 verbose unfinished npm timer idealTree:#root 1645919797236
+56 verbose code 1
+57 error A complete log of this run can be found in:
+57 error     /Users/paolo/Dropbox/Bristol-Uni/Hackathon/shipple/frontend/~/.npm/_logs/2022-02-26T23_56_36_791Z-debug-0.log

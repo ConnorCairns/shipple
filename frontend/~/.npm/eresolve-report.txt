@@ -1,0 +1,81 @@
+# npm resolution error report
+
+2022-02-26T23:56:39.540Z
+
+While resolving: frontend@0.1.0
+Found: mapbox-gl@2.7.0
+node_modules/mapbox-gl
+  mapbox-gl@"^2.7.0" from the root project
+
+Could not resolve dependency:
+peer mapbox-gl@"^1.12.0" from react-mapbox-gl@5.1.1
+node_modules/react-mapbox-gl
+  react-mapbox-gl@"*" from the root project
+
+Fix the upstream dependency conflict, or retry
+this command with --force, or --legacy-peer-deps
+to accept an incorrect (and potentially broken) dependency resolution.
+
+Raw JSON explanation object:
+
+{
+  "code": "ERESOLVE",
+  "current": {
+    "name": "mapbox-gl",
+    "version": "2.7.0",
+    "whileInstalling": {
+      "name": "frontend",
+      "version": "0.1.0",
+      "path": "/Users/paolo/Dropbox/Bristol-Uni/Hackathon/shipple/frontend"
+    },
+    "location": "node_modules/mapbox-gl",
+    "isWorkspace": false,
+    "dependents": [
+      {
+        "type": "prod",
+        "name": "mapbox-gl",
+        "spec": "^2.7.0",
+        "from": {
+          "location": "/Users/paolo/Dropbox/Bristol-Uni/Hackathon/shipple/frontend"
+        }
+      }
+    ]
+  },
+  "currentEdge": {
+    "type": "prod",
+    "name": "mapbox-gl",
+    "spec": "^2.7.0",
+    "from": {
+      "location": "/Users/paolo/Dropbox/Bristol-Uni/Hackathon/shipple/frontend"
+    }
+  },
+  "edge": {
+    "type": "peer",
+    "name": "mapbox-gl",
+    "spec": "^1.12.0",
+    "error": "INVALID",
+    "from": {
+      "name": "react-mapbox-gl",
+      "version": "5.1.1",
+      "whileInstalling": {
+        "name": "frontend",
+        "version": "0.1.0",
+        "path": "/Users/paolo/Dropbox/Bristol-Uni/Hackathon/shipple/frontend"
+      },
+      "location": "node_modules/react-mapbox-gl",
+      "isWorkspace": false,
+      "dependents": [
+        {
+          "type": "prod",
+          "name": "react-mapbox-gl",
+          "spec": "*",
+          "from": {
+            "location": "/Users/paolo/Dropbox/Bristol-Uni/Hackathon/shipple/frontend"
+          }
+        }
+      ]
+    }
+  },
+  "strictPeerDeps": false,
+  "force": false
+}
