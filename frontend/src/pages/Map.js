@@ -2,6 +2,7 @@ import { Box, Button, ButtonGroup, Checkbox, Container, FormControlLabel, Grid, 
 import Title from '../components/Title';
 import { useReducerContext } from '../services/ReducerProvider';
 import ActualMap from '../components/ActualMap';
+import { useParams } from 'react-router';
 
 
 function Paragraph() {
@@ -67,6 +68,7 @@ function DaysToGo() {
 
 const Map = () => {
     const [state, dispatch] = useReducerContext()
+    const params = useParams()
 
     return (
         <Box component="main"
@@ -90,12 +92,12 @@ const Map = () => {
                         <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', mt: '0.5rem' }}>
                             <Title>{state.name}</Title>
                             <Stack direction="row" spacing={2} justifyContent='space-evenly'>
-                                <Paper elevation={0}>{state.responses} responded</Paper>
+                                <Paper elevation={0}>{state.guests} guests</Paper>
                                 <Paper elevation={0}>
                                     <DaysToGo></DaysToGo> days to go
                                 </Paper>
                                 <Paper elevation={0}>
-                                    Invite link: <a href={state.crawlID}>{state.crawlID}</a>
+                                    Invite link: <a href={`/crawl/join/${params.crawlID}`}>{`/crawl/join/${params.crawlID}`}</a>
                                 </Paper>
                             </Stack>
                         </Paper>

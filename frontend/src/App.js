@@ -5,8 +5,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from "./components/Navbar";
 import Map from "./pages/Map";
 import Lobby from "./pages/Lobby";
-import useChannel from "./services/channel/useChannel";
 import Test from "./pages/Test";
+import ClientJoin from "./pages/ClientJoin";
 
 
 const theme = createTheme({
@@ -19,7 +19,6 @@ const theme = createTheme({
 })
 
 function App() {
-  const UNSUBSCRIBE = useChannel("fosters crawl", "abc123")
 
   return (
     <ThemeProvider theme={theme}>
@@ -31,7 +30,8 @@ function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/crawl" element={<Lobby />} />
               <Route path="/crawl/:crawlID" element={<Test />} />
-              <Route path="/map" element={<Map />} />
+              <Route path="/crawl/join/:crawlID" element={<ClientJoin />} />
+              <Route path="/crawl/map/:crawlID" element={<Map />} />
             </Routes>
           </Router>
         </Box>

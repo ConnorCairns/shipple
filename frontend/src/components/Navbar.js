@@ -85,12 +85,6 @@ const Navbar = () => {
                         </ListItemIcon>
                         <ListItemText primary="Dashboard" />
                     </ListItemButton>
-                    <ListItemButton key={"map"} onClick={() => navigate("/map")}>
-                        <ListItemIcon >
-                            <MapIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Map" />
-                    </ListItemButton>
                     <ListItemButton key={"Create Bar Crawl"} onClick={() => navigate("/crawl")}>
                         <ListItemIcon >
                             <AddIcon />

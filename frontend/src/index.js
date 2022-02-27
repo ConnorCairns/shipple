@@ -9,7 +9,7 @@ import SocketProvider from "./services/channel/SocketProvider";
 ReactDOM.render(
   <React.StrictMode>
     <ReducerProvider initialState={initialState} reducer={reducer} >
-      <SocketProvider wsUrl="ws://localhost:8080/ws" >
+      <SocketProvider wsUrl="wss://shipple-api.fly.dev/ws" >
         <App />
       </SocketProvider>
     </ReducerProvider>

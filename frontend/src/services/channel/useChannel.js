@@ -9,7 +9,7 @@ const useChannel = (name, id) => {
     useEffect(() => {
         if (state.connected) {
             socket.send(JSON.stringify({
-                'cmd': "SUBSCRIBE",
+                'cmd': 'SUBSCRIBE',
                 'path': name,
                 'message': 'fosters',
             }))

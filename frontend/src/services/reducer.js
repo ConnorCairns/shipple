@@ -7,9 +7,13 @@ export const initialState = {
     carbon: 10,
     uberSavings: 50,
     pintOptions: 100,
-    crawlID: "https://youtu.be/dQw4w9WgXcQ",
+    crawlID: "",
     algorithm: "ai",
-    responses: 10
+    responses: 10,
+    postcode: "",
+    polygons: {},
+    pubs: [],
+    guests: 0
 }
 
 export const reducer = (state, action) => {
@@ -28,6 +32,12 @@ export const reducer = (state, action) => {
             return {...state, crawlID: action.payload}
         case 'updateAlgorithm':
             return {...state, algorithm: action.payload}
+        case 'updatePostcode':
+            return {...state, postcode: action.payload}
+        case 6: //tom
+            return {...state, polygons: {}, pubs: {}}
+        case 'updateGuests':
+            return {...state, guests: action.payload}
         default:
             return state
     }
