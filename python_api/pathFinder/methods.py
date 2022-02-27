@@ -175,3 +175,50 @@ def get_poly(data):
         plot_iso_map(map_, polys, intersect=intersection)
 
     return poly_list
+
+def parse_pubs(data):
+    # print(f"A - {data}")
+    query_parameters = data
+
+    # print((query_parameters["elements"][0]["tags"]["name"]))
+    nodes = {}
+    ways = {}
+    lst = []
+    for pub in (query_parameters["elements"]):
+        print(pub)
+        if pub["type"] in ["node", "way"]:
+            if "nodes" in pub.keys():
+                if "tags" in pub.keys():
+                    if "name" in pub["tags"].keys():
+                        name = pub["tags"]["name"]
+                        ways[pub["nodes"][0]] = name
+                else:
+                    pass
+                    # nodes[pub["id"]] = pub["nodes"][0]
+            else:
+                lat = pub["lat"]
+                long = pub["lon"]
+                if "tags" in pub.keys():
+                    if "name" in pub["tags"].keys():
+                        name = pub["tags"]["name"]
+                    else:
+                        name = "NULL"
+                    lst.append([name, lat, long])
+                    # print(f"{lat} - {long} - {name}")
+                else:
+                    nodes[pub["id"]] = [lat, long]
+        # elif pub["type"] == "way":
+        #     if "name" in pub["tags"].keys():
+        #         name = pub["tags"]["name"]
+        #         ways[pub["nodes"][0]] = name
+
+    for id, name in ways.items():
+        lat, long = nodes[id]
+        lst.append([name, lat, long])
+
+    # print(lst)
+
+    for pub in lst:
+        print(f"{pub[1]} - {pub[2]} - {pub[0]}")
+
+    return lst

@@ -3,7 +3,7 @@ import requests
 from flask import request, jsonify
 
 # import pathFinder
-from pathFinder import methods as a
+from pathFinder import methods, algorithms_methods
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
@@ -25,72 +25,15 @@ def func(coords):
 def func2(pubs):
     return pubs
 
-def parse_pubs(data):
-    # print(f"A - {data}")
-    query_parameters = data
-
-    # print((query_parameters["elements"][0]["tags"]["name"]))
-    nodes = {}
-    ways = {}
-    lst = []
-    for pub in (query_parameters["elements"]):
-        print(pub)
-        if pub["type"] in ["node", "way"]:
-            if "nodes" in pub.keys():
-                if "tags" in pub.keys():
-                    if "name" in pub["tags"].keys():
-                        name = pub["tags"]["name"]
-                        ways[pub["nodes"][0]] = name
-                else:
-                    pass
-                    # nodes[pub["id"]] = pub["nodes"][0]
-            else:
-                lat = pub["lat"]
-                long = pub["lon"]
-                if "tags" in pub.keys():
-                    if "name" in pub["tags"].keys():
-                        name = pub["tags"]["name"]
-                    else:
-                        name = "NULL"
-                    lst.append([name, lat, long])
-                    # print(f"{lat} - {long} - {name}")
-                else:
-                    nodes[pub["id"]] = [lat, long]
-        # elif pub["type"] == "way":
-        #     if "name" in pub["tags"].keys():
-        #         name = pub["tags"]["name"]
-        #         ways[pub["nodes"][0]] = name
-
-    for id, name in ways.items():
-        lat, long = nodes[id]
-        lst.append([name, lat, long])
-
-    # print(lst)
-
-    for pub in lst:
-        print(f"{pub[1]} - {pub[2]} - {pub[0]}")
-
-    return lst
-
-
 @app.route('/api/v1/get_pubs_box', methods=['GET'])
 def api_get_pubs_box():
     query_parameters = request.get_json()
-    # print(f"a {query_parameters}")
+
     lat1, lon1, lat2, lon2 = query_parameters["coords"]
-    # print(f"b {lat1} - {lon1} - {lat2} - {lon2}")
-    url = QUERY.format(f'{lat1},{lon1},{lat2},{lon2}')
 
-    # print(f"c - {url}")
-    r = requests.get(url)
-    # print(f"d - {r}")
-    data = r.json()
-    # print(f"c - {data}")
-
-    lst = parse_pubs(data)
+    lst = algorithms_methods.get_pubs_in_box(lat1,lon1,lat2,lon2)
 
     return jsonify(lst)
-    # return "ree"
 
 
 @app.route('/api/v1/get_pubs_poly', methods=['GET'])
@@ -107,7 +50,7 @@ def api_get_pubs_poly():
     data = r.json()
     # print(f"e - {data}")
 
-    lst = parse_pubs(data)
+    lst = methods.parse_pubs(data)
 
     return jsonify(lst)
     # return "ree"
@@ -123,7 +66,7 @@ def get_pubs_poly(coords):
     data = r.json()
     # print(f"e - {data}")
 
-    lst = parse_pubs(data)
+    lst = methods.parse_pubs(data)
 
     return lst
     # return "ree"
@@ -139,7 +82,7 @@ def chuckle_brothers():
 
     print(coordLst)
     print("B")
-    poly = func(a.get_poly(coordLst))
+    poly = func(methods.get_poly(coordLst))
     # poly = func(query_parameters["coords"])
     print("C")
     pubs = get_pubs_poly(poly)
@@ -149,6 +92,35 @@ def chuckle_brothers():
     ans = {"coords" : poly, "pubs" : pubs, "selected" : sPubs}
     print("ans" , ans)
     return jsonify(ans)
+
+@app.route('/api/v1/basic_mean', methods=['GET'])
+def basic_mean():
+    query_parameters = request.get_json()
+    lat1, lon1, lat2, lon2 = query_parameters["coords"]
+
+    pubs_data = algorithms_methods.get_pubs_in_box(lat1,lon1,lat2,lon2)
+
+    print("data here")
+    print(pubs_data)
+    x_mean, y_mean = algorithms_methods.get_mean_of_pub_locations(pubs_data)
+
+    closest_pubs_array = algorithms_methods.find_closest_pubs(pubs_data, x_mean, y_mean, number_of_pubs=1)
+
+    return jsonify(closest_pubs_array)
+
+@app.route('/api/v1/clever_mean', methods=['GET'])
+def clever_mean():
+    query_parameters = request.get_json()
+    lat1, lon1, lat2, lon2 = query_parameters["coords"]
+
+    pubs_data = algorithms_methods.get_pubs_in_box(lat1,lon1,lat2,lon2)
+
+    x_clever_mean, y_clever_mean = algorithms_methods.get_clever_mean_of_pub_locations(pubs_data)
+
+    closest_pubs_array = algorithms_methods.find_closest_pubs(pubs_data, x_clever_mean, y_clever_mean, number_of_pubs=1)
+
+    return jsonify(closest_pubs_array)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
