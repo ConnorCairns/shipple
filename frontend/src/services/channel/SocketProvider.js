@@ -972,9 +972,9 @@ const SocketProvider = ({ wsUrl, children }) => {
             dispatch({ type: 'connected' })
 
             const heartbeat = () => {
-                if (!socket) return
-                if (socket.readyState !== 1) return
-                socket.send("heartbeat")
+                if (!s) return
+                if (s.readyState !== 1) return
+                s.send("heartbeat")
                 setTimeout(heartbeat, 500)
             }
     
