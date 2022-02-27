@@ -1,13 +1,14 @@
 package ws
 
 import (
-	"bytes"
 	"encoding/json"
 	"log"
 	"net/http"
 	"time"
 
+	"github.com/ConnorCairns/shipple/monkey/models"
 	"github.com/gorilla/websocket"
+	"gorm.io/gorm"
 )
 
 const (
@@ -42,6 +43,8 @@ type Client struct {
 
 	// Helper stuff
 	name string
+
+	db *gorm.DB
 }
 
 func (c *Client) handle(message []byte) {
@@ -58,13 +61,13 @@ func (c *Client) handle(message []byte) {
 }
 
 func (c *Client) subscribe(path string) {
+	log.Printf("Trying subscribe")
 	ch, ok := GetChannelFromPath(path)
 	if !ok {
 		ch = newChannel(path)
 		go ch.run()
 	}
 	ch.register <- c
-
 	msg := Signal{
 		Cmd:    Status,
 		Path:   "",
@@ -79,6 +82,22 @@ func (c *Client) subscribe(path string) {
 		log.Printf("Error connecting client")
 	} else {
 		c.send <- raw
+	}
+
+	coord_bytes := models.CalculateCrawl(path, c.db)
+	init_msg := Signal{
+		Cmd:     Coordinates,
+		Path:    path,
+		Sender:  "sys",
+		Message: string(coord_bytes),
+	}
+	log.Printf("Trying to calc crawl")
+	init_raw, err := json.Marshal(init_msg)
+
+	if err != nil {
+		log.Printf("Error marshalling calc'd vals")
+	} else {
+		c.send <- init_raw
 	}
 }
 
@@ -123,7 +142,7 @@ func (c *Client) readPump() {
 			}
 			break
 		}
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+		c.handle(message)
 		// TODO: Broadcast message
 	}
 }
@@ -174,14 +193,14 @@ func (c *Client) writePump() {
 	}
 }
 
-func ServeWs(w http.ResponseWriter, r *http.Request) {
+func ServeWs(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	client := &Client{conn: conn, send: make(chan []byte, buffer)}
+	client := &Client{conn: conn, send: make(chan []byte, buffer), name: "temp name", db: db}
 
 	log.Println("Client connected")
 	// Start our readers and writers for our clients in seperate Goroutines

@@ -3,5 +3,5 @@ package models
 import "gorm.io/gorm"
 
 func InitDb(db *gorm.DB) {
-	db.AutoMigrate(&Guest{}, &Lobby{}, &Location{})
+	db.AutoMigrate(Lobby{}, Guest{}, Location{})
 }
