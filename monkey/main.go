@@ -25,7 +25,7 @@ func main() {
 
 	db_url := os.Getenv("DATABASE_URL")
 	if db_url == "" {
-		db_url = "postgresql://postgres:5e853fcfd5752a2cf1b8914e4d8ad6f753e2ed82ab3deafc@localhost:5432"
+		db_url = "postgres://shipple_api:rR0dqDAycZz5Oc0@localhost:5432/shipple_api"
 	}
 
 	db, err := gorm.Open(postgres.Open(db_url), &gorm.Config{})
@@ -42,7 +42,7 @@ func main() {
 	r := gin.Default()
 	r.Use(cors.Default())
 	r.GET("/ws", func(c *gin.Context) {
-		ws.ServeWs(c.Writer, c.Request)
+		ws.ServeWs(c.Writer, c.Request, db)
 	})
 
 	api := r.Group("/api")

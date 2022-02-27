@@ -3,6 +3,7 @@ package ws
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 )
 
 type SignalType int
@@ -24,6 +25,7 @@ const (
 
 	Status
 	Disconnect
+	Coordinates
 )
 
 var toString = map[SignalType]string{
@@ -32,6 +34,7 @@ var toString = map[SignalType]string{
 	Message:     "MESSAGE",
 	Status:      "STATUS",
 	Disconnect:  "DISCONNECT",
+	Coordinates: "COORDINATES",
 }
 
 var toID = map[string]SignalType{
@@ -40,6 +43,7 @@ var toID = map[string]SignalType{
 	"MESSAGE":     Message,
 	"STATUS":      Status,
 	"DISCONNECT":  Disconnect,
+	"COORDINATES": Coordinates,
 }
 
 // Signal represents an induvidial message of any type
@@ -55,6 +59,7 @@ func (s *SignalType) UnmarshalJSON(data []byte) error {
 	var t string
 
 	err := json.Unmarshal(data, &t)
+	log.Printf(t)
 	if err != nil {
 		return err
 	}
@@ -67,6 +72,7 @@ func (s *SignalType) UnmarshalJSON(data []byte) error {
 
 func (s SignalType) MarshallJSON() ([]byte, error) {
 	if s, ok := toString[s]; ok {
+		log.Println(s)
 		return json.Marshal(s)
 	}
 

@@ -9,6 +9,7 @@ import (
 
 	"github.com/ConnorCairns/shipple/monkey/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 )
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -28,7 +29,7 @@ func (e *Env) createLobby(c *gin.Context) {
 		})
 	} else {
 		c.JSON(500, gin.H{
-			"error": "something terrible",
+			"error": result.Error,
 		})
 	}
 }
@@ -43,7 +44,7 @@ func (e *Env) getRemebered(c *gin.Context) {
 		return
 	}
 
-	if err := e.db.Where("slug = ?", c.Param("slug")).First(&lobby).Error; err != nil {
+	if err := e.db.Preload(clause.Associations).Where("slug = ?", c.Param("slug")).First(&lobby).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "room not found!"})
 		return
 	}
@@ -61,13 +62,15 @@ func (e *Env) joinLobby(c *gin.Context) {
 	var guest models.Guest
 	cookie, remembered := c.Params.Get("remember")
 
-	if err := e.db.Where("slug = ?", c.Param("slug")).First(&lobby).Error; err != nil {
+	if err := e.db.Preload("Admin.LastKnownLocation").Preload("Guests.LastKnownLocation").Preload(clause.Associations).Where("slug = ?", c.Param("slug")).First(&lobby).Error; err != nil {
 		log.Printf(c.Param("slug"))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "room not found!"})
 		return
 	}
 
 	c.ShouldBindJSON(&guest)
+
+	guest.LobbyID = lobby.ID
 
 	if remembered {
 		guest.Remember_cookie = cookie
@@ -90,11 +93,11 @@ func (e *Env) calcCrawl(c *gin.Context) {
 		return
 	}
 
-	number_of_coords := (len(lobby.Guests) * 2) + 2
+	number_of_coords := (len(lobby.Guests) * 2)
 
 	all_coords := make([]float64, number_of_coords)
 
-	for i := 0; i < number_of_coords-2; i += 2 {
+	for i := 0; i < number_of_coords; i += 2 {
 		all_coords[i] = lobby.Guests[i].LastKnownLocation.Latitude
 		all_coords[i+1] = lobby.Guests[i].LastKnownLocation.Latitude
 	}
