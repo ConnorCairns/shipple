@@ -53,6 +53,4 @@ def create_pub_route(publist=None):
 
 if __name__ == '__main__':
     create_pub_route(None)
-
-
     pass
