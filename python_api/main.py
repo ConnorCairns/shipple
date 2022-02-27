@@ -136,6 +136,8 @@ def chuckle_brothers():
     coordLst = []
     for i in range(0, len(query_parameters["coords"]), 2):
         coordLst.append((query_parameters["coords"][i], query_parameters["coords"][i+1]))
+
+    print(coordLst)
     print("B")
     poly = func(a.get_poly(coordLst))
     # poly = func(query_parameters["coords"])
@@ -149,4 +151,4 @@ def chuckle_brothers():
     return jsonify(ans)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0")

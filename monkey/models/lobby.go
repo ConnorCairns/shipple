@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -40,7 +41,7 @@ func CalculateCrawl(path string, db *gorm.DB) []byte {
 
 	log.Println("Made coords")
 
-	postBody, err := json.Marshal(all_coords)
+	postBody, err := json.Marshal(gin.H{"coords": all_coords})
 	responseBody := bytes.NewBuffer(postBody)
 
 	log.Println("Making req")
