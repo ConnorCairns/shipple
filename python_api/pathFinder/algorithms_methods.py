@@ -31,32 +31,34 @@ def get_pubs_in_box(lat1,lon1,lat2,lon2):
 
     return parsed_data
 
-def get_mean_of_pub_locations(pub_json_data):
-    pub_location_data = [(pub[1], pub[2]) for pub in pub_json_data]
+def get_mean_of_coords(coords_list):
+    # pub_location_data = [(pub[1], pub[2]) for pub in pub_json_data]
 
-    pub_array = np.array(pub_location_data)
+    coords_array = np.array(coords_list)
 
-    x_mean = np.mean(pub_array[:,0])
-    y_mean = np.mean(pub_array[:,1])
+    x_mean = np.mean(coords_array[:,0])
+    y_mean = np.mean(coords_array[:,1])
 
     return x_mean, y_mean
 
 # Note that 1 lat/long degree = ~111 km
-def get_clever_mean_of_pub_locations(pub_json_data):
-    uber_threashold = 0.001 # assumes people will uber if > 0.111km to walk as crow flies (obviously should be changed)
+def get_clever_mean_of_coords(coords_list):
+    uber_threashold = 0.03 # assumes people will uber if > 3.33km to walk as crow flies (obviously should be changed)
 
-    x_mean, y_mean = get_mean_of_pub_locations(pub_json_data)
+    x_mean, y_mean = get_mean_of_coords(coords_list)
 
-    pub_location_data = [(pub[1], pub[2]) for pub in pub_json_data]
+    coords_array = np.array(coords_list)
 
-    pub_array = np.array(pub_location_data)
+    clever_coords_array = np.array([coords for coords in coords_array if 0.5 * uber_threashold < distance(coords[0], x_mean, coords[1], y_mean) < 1.75 * uber_threashold])
 
-    clever_pubs = np.array([pub for pub in pub_array if 0.5 * uber_threashold < distance(pub[0], x_mean, pub[1], y_mean) < 1.75 * uber_threashold])
-
-    print("c pubs")
-    print(clever_pubs)
-    x_clever_mean = np.mean(clever_pubs[:,0])
-    y_clever_mean = np.mean(clever_pubs[:,1])
+    print("coords")
+    print(clever_coords_array)
+    if(clever_coords_array.size > 0):
+        x_clever_mean = np.mean(clever_coords_array[:,0])
+        y_clever_mean = np.mean(clever_coords_array[:,1])
+    else:
+        x_clever_mean = x_mean
+        y_clever_mean = y_mean
 
     return x_clever_mean, y_clever_mean
 

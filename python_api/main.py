@@ -93,29 +93,35 @@ def chuckle_brothers():
     print("ans" , ans)
     return jsonify(ans)
 
-@app.route('/api/v1/basic_mean', methods=['GET'])
+@app.route('/api/v1/basic_mean', methods=['POST'])
 def basic_mean():
     query_parameters = request.get_json()
-    lat1, lon1, lat2, lon2 = query_parameters["coords"]
 
-    pubs_data = algorithms_methods.get_pubs_in_box(lat1,lon1,lat2,lon2)
+    coords_list = []
+    for i in range(0, len(query_parameters["coords"]), 2):
+        coords_list.append((query_parameters["coords"][i], query_parameters["coords"][i+1]))
+
+    pubs_data = get_pubs_poly(methods.get_poly(coords_list))
 
     print("data here")
     print(pubs_data)
-    x_mean, y_mean = algorithms_methods.get_mean_of_pub_locations(pubs_data)
+    x_mean, y_mean = algorithms_methods.get_mean_of_coords(coords_list)
 
     closest_pubs_array = algorithms_methods.find_closest_pubs(pubs_data, x_mean, y_mean, number_of_pubs=1)
 
     return jsonify(closest_pubs_array)
 
-@app.route('/api/v1/clever_mean', methods=['GET'])
+@app.route('/api/v1/clever_mean', methods=['POST'])
 def clever_mean():
     query_parameters = request.get_json()
-    lat1, lon1, lat2, lon2 = query_parameters["coords"]
 
-    pubs_data = algorithms_methods.get_pubs_in_box(lat1,lon1,lat2,lon2)
+    coords_list = []
+    for i in range(0, len(query_parameters["coords"]), 2):
+        coords_list.append((query_parameters["coords"][i], query_parameters["coords"][i+1]))
 
-    x_clever_mean, y_clever_mean = algorithms_methods.get_clever_mean_of_pub_locations(pubs_data)
+    pubs_data = get_pubs_poly(methods.get_poly(coords_list))
+
+    x_clever_mean, y_clever_mean = algorithms_methods.get_clever_mean_of_coords(coords_list)
 
     closest_pubs_array = algorithms_methods.find_closest_pubs(pubs_data, x_clever_mean, y_clever_mean, number_of_pubs=1)
 
