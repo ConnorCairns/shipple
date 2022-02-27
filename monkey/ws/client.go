@@ -97,7 +97,8 @@ func (c *Client) subscribe(path string) {
 	if err != nil {
 		log.Printf("Error marshalling calc'd vals")
 	} else {
-		c.send <- init_raw
+		log.Println("Sending msg")
+		ch.broadcast <- init_raw
 	}
 }
 
@@ -163,6 +164,7 @@ func (c *Client) writePump() {
 		case message, ok := <-c.send:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
+				log.Println("Sending msg failed")
 				// The hub closed the channel.
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return

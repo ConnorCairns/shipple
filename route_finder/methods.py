@@ -159,6 +159,4 @@ def plot_iso_map(G, polys, intersect=None):
 
 
 def pub_path(pubs_df, centroid):
-    # calculates an array of the
-    pubs_df['dist_to_centroid'] = [np.linalg.norm(centroid - np.array([pubs_df['lat'][i], pubs_df['long'][i]]))
-                                   for i in range(len(pubs_df))]
+    pass

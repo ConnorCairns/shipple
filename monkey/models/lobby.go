@@ -31,13 +31,21 @@ func CalculateCrawl(path string, db *gorm.DB) []byte {
 		return nil
 	}
 
+	log.Println(len(lobby.Guests))
 	number_of_coords := (len(lobby.Guests) * 2)
 
-	all_coords := make([]float64, number_of_coords)
+	all_coords := make([]float64, 0, number_of_coords)
 
-	for i := 0; i < number_of_coords-2; i += 2 {
-		all_coords[i] = lobby.Guests[i].LastKnownLocation.Latitude
-		all_coords[i+1] = lobby.Guests[i].LastKnownLocation.Longitude
+	log.Println(number_of_coords)
+
+	// for i := 0; i < number_of_coords-1; i += 1 {
+	// 	all_coords[i] = lobby.Guests[i].LastKnownLocation.Latitude
+	// 	all_coords[i+1] = lobby.Guests[i].LastKnownLocation.Longitude
+	// }
+
+	//Tom was overwriting here, shits fucked
+	for i := 0; i < len(lobby.Guests); i +=1 {
+		all_coords = append(all_coords, lobby.Guests[i].LastKnownLocation.Latitude, lobby.Guests[i].LastKnownLocation.Longitude)
 	}
 
 	log.Println(all_coords)
@@ -57,6 +65,7 @@ func CalculateCrawl(path string, db *gorm.DB) []byte {
 	}
 
 	rawContent, err := ioutil.ReadAll(resp.Body)
+
 
 	if err != nil {
 		panic(err)
